@@ -27,8 +27,8 @@
     "ethers": "^5.3.1",
     "hardhat": "^2.4.0",
     "dotenv": "^8.6.0",
-    "@openzeppelin/contracts": "^3.3.0",
-    "@openzeppelin/contracts-upgradeable": "^3.4.0",
+    "@openzeppelin/contracts": "^4.0.0",
+    "@openzeppelin/contracts-upgradeable": "^4.0.0",
     "@openzeppelin/test-helpers": "^0.5.10"
   },
   "dependencies": {}
