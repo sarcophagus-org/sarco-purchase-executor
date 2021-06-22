@@ -108,4 +108,32 @@ contract PurchaseExecutor {
                 usdc_to_sarco_rate;
         return (sarco_allocation, usdc_cost);
     }
+
+    function offer_started() external view returns (bool) {
+        return offer_started_at != 0;
+    }
+
+    function offer_expired() external view returns (bool) {
+        return block.timestamp >= offer_expires_at;
+    }
+
+    //should be sarco token - extra param
+    function _start_unless_started(IERC20 token) internal {
+        if (offer_started_at == 0) {
+            // Should be sarco/token
+            require(IERC20(token).balanceOf(address(this)) == sarco_allocations_total, "not funded");
+            uint256 started_at = block.timestamp;
+            uint256 expires_at = started_at + offer_expiration_delay;
+            offer_started_at = started_at;
+            offer_expires_at = expires_at;
+            emit OfferStarted (started_at, expires_at);
+        }
+    }
+
+    /**
+     * @notice Starts the offer if it 1) hasn't been started yet and 2) has received funding in full.
+     */
+    function start(IERC20 token) external {
+        _start_unless_started(token);
+    }
 }

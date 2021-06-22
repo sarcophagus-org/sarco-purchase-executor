@@ -1,11 +1,12 @@
 // We import Chai to use its asserting functions here.
 const { expect } = require("chai");
-const { BN, constants, expectRevert, time } = require('@openzeppelin/test-helpers');
 
 describe("Purchase Executor Contract", function () {
 
     let PurchaseExecutor;
     let PurchaseExecutorDeployed;
+    let SarcoTokenMock;
+    let SarcoTokenMockDeployed;
     let owner;
     let addr1;
     let addr2;
@@ -142,6 +143,78 @@ describe("Purchase Executor Contract", function () {
                     350 // total should be 360
                 )).to.be.revertedWith("PurchaseExecutor: Allocations_total does not equal the sum of passed allocations");
         });
+    });
+
+    describe("start", function () {
+        beforeEach(async function () {
+            // Get the ContractFactory and Signers here.
+            SarcoTokenMock = await ethers.getContractFactory("SarcoTokenMock");
+            SarcoTokenMockDeployed = await SarcoTokenMock.deploy();
+            });
         
+        it("Should revert since contract does not own allocated funds", async function () {
+            await PurchaseExecutorDeployed.initialize(
+                1, 
+                100, 
+                100, 
+                1000, 
+                ["0x5A98FcBEA516Cf06857215779Fd812CA3beF1B32", "0xf73a1260d222f447210581DDf212D915c09a3249", "0x3e40D73EB977Dc6a537aF587D48316feE66E9C8c"],
+                [110,120,130],
+                360
+            );
+            await expect(
+                PurchaseExecutorDeployed.start(SarcoTokenMockDeployed.address))
+                .to.be.revertedWith("not funded");
+        });
+
+        it("Should emit offerstarted event", async function () {
+            await PurchaseExecutorDeployed.initialize(
+                1, 
+                100, 
+                100, 
+                1000, 
+                ["0x5A98FcBEA516Cf06857215779Fd812CA3beF1B32", "0xf73a1260d222f447210581DDf212D915c09a3249", "0x3e40D73EB977Dc6a537aF587D48316feE66E9C8c"],
+                [110,120,130],
+                360
+            );
+            await SarcoTokenMockDeployed.mint(PurchaseExecutorDeployed.address, 360);
+            await expect(PurchaseExecutorDeployed.start(SarcoTokenMockDeployed.address))
+            .to.emit(PurchaseExecutorDeployed, "OfferStarted");
+        });
+
+        it("offer_started should return true", async function () {
+            await PurchaseExecutorDeployed.initialize(
+                1, 
+                100, 
+                100, 
+                1000, 
+                ["0x5A98FcBEA516Cf06857215779Fd812CA3beF1B32", "0xf73a1260d222f447210581DDf212D915c09a3249", "0x3e40D73EB977Dc6a537aF587D48316feE66E9C8c"],
+                [110,120,130],
+                360
+            );
+            await SarcoTokenMockDeployed.mint(PurchaseExecutorDeployed.address, 360);
+            await PurchaseExecutorDeployed.start(SarcoTokenMockDeployed.address);
+            expect( await PurchaseExecutorDeployed.offer_started()).to.be.equal(true);
+        });
+
+        it("offer_expired should return true", async function () {
+            await PurchaseExecutorDeployed.initialize(
+                1, 
+                100, 
+                100, 
+                1000, 
+                ["0x5A98FcBEA516Cf06857215779Fd812CA3beF1B32", "0xf73a1260d222f447210581DDf212D915c09a3249", "0x3e40D73EB977Dc6a537aF587D48316feE66E9C8c"],
+                [110,120,130],
+                360
+            );
+            await SarcoTokenMockDeployed.mint(PurchaseExecutorDeployed.address, 360);
+            await PurchaseExecutorDeployed.start(SarcoTokenMockDeployed.address);
+            //must use evm_increasetime + mine the block
+            await network.provider.send("evm_increaseTime", [1000]);
+            await network.provider.send("evm_mine");
+            expect( await PurchaseExecutorDeployed.offer_expired()).to.be.equal(true);
+        });
+
+
     });
 });
