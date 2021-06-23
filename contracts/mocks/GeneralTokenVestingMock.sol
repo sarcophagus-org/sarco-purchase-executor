@@ -77,8 +77,12 @@ contract GeneralTokenVestingMock {
         uint256 resultBalance = afterBalance.sub(beforeBalance);
         require(resultBalance != 0, "GeneralTokenVesting: amount is zero");
 
-        Vest memory newVest =
-            Vest(resultBalance, 0, block.timestamp, vestDuration);
+        Vest memory newVest = Vest(
+            resultBalance,
+            0,
+            block.timestamp,
+            vestDuration
+        );
         tokenVest[tokenAddress][beneficiary] = newVest;
 
         emit VestStarted(tokenAddress, beneficiary, resultBalance);
@@ -141,6 +145,7 @@ contract GeneralTokenVestingMock {
                 getReleasedTokens(token, beneficiary)
             );
     }
+
     /**
      * @notice Transfers vested tokens to beneficiary.
      * @param beneficiary beneficiary to receive the funds
@@ -157,8 +162,8 @@ contract GeneralTokenVestingMock {
         tokenVest[token][beneficiary]._releasedTokens = tokenVest[token][
             beneficiary
         ]
-            ._releasedTokens
-            .add(unreleased);
+        ._releasedTokens
+        .add(unreleased);
         token.safeTransfer(recipient, unreleased);
         emit TokensReleased(token, beneficiary, recipient, unreleased);
     }
