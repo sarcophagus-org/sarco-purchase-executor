@@ -144,7 +144,7 @@ contract PurchaseExecutor {
             require(
                 IERC20(token).balanceOf(address(this)) ==
                     sarco_allocations_total,
-                "not funded"
+                "PurchaseExecutor: not funded with Sarco Tokens"
             );
             uint256 started_at = block.timestamp;
             uint256 expires_at = started_at + offer_expiration_delay;
@@ -177,14 +177,14 @@ contract PurchaseExecutor {
         address general_token_vesting_address
     ) internal {
         _start_unless_started(sarco_token);
-        require(block.timestamp < offer_expires_at, "offer expired");
+        require(block.timestamp < offer_expires_at, "PurchaseExecutor: offer expired");
 
         uint256 sarco_allocation = 0;
         uint256 usdc_cost = 0;
         (sarco_allocation, usdc_cost) = _get_allocation(_sarco_receiver);
 
         // check allocation
-        require(sarco_allocation > 0, "no allocation");
+        require(sarco_allocation > 0, "PurchaseExecutor: you have no Sarco allocation");
 
         // forward USDC cost of the purchase to the DAO contract
         uint256 before_Balance = usdc_token.balanceOf(SARCO_DAO);
@@ -193,7 +193,7 @@ contract PurchaseExecutor {
 
         // check if usdc recieved covers usdc cost
         uint256 _usdc_received = after_balance - before_Balance;
-        require(_usdc_received >= usdc_cost, "insufficent funds");
+        require(_usdc_received >= usdc_cost, "PurchaseExecutor: insufficent USDC to make Sarco Purchase");
 
         // clear purchaser allocation
         sarco_allocations[_sarco_receiver] = 0;
@@ -235,10 +235,10 @@ contract PurchaseExecutor {
     }
 
     function recover_unsold_tokens(IERC20 token) external {
-        require(offer_started_at != 0, "Offer has not started");
+        require(offer_started_at != 0, "PurchaseExecutor: Purchase offer has not started");
         require(
             block.timestamp >= offer_expires_at,
-            "Offer has not yet expired"
+            "PurchaseExecutor: Purchase offer has not yet expired"
         );
         uint256 unsold_sarco_amount = IERC20(token).balanceOf(address(this));
         if (unsold_sarco_amount > 0) {

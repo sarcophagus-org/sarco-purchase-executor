@@ -159,7 +159,7 @@ describe("Purchase Executor Contract", function () {
             );
             await expect(
                 PurchaseExecutorDeployed.start(SarcoTokenMockDeployed.address))
-                .to.be.revertedWith("not funded");
+                .to.be.revertedWith("PurchaseExecutor: not funded with Sarco Tokens");
         });
 
         it("Should emit offerstarted event", async function () {
@@ -236,7 +236,7 @@ describe("Purchase Executor Contract", function () {
                 USDCTokenMockDeployed.address,
                 SarcoTokenMockDeployed.address,
                 GeneralTokenVestingMockDeployed.address
-            )).to.be.revertedWith("offer expired");
+            )).to.be.revertedWith("urchaseExecutor: offer expired");
         });
 
         it("Should revert since the Purchaser does not have an allocation", async function () {
@@ -244,7 +244,7 @@ describe("Purchase Executor Contract", function () {
                 USDCTokenMockDeployed.address,
                 SarcoTokenMockDeployed.address,
                 GeneralTokenVestingMockDeployed.address,
-            )).to.be.revertedWith("no allocation");
+            )).to.be.revertedWith("PurchaseExecutor: you have no Sarco allocation");
         });
 
         it("Should revert since the Purchaser did not approve PurchaseExector tokens", async function () {
@@ -256,7 +256,6 @@ describe("Purchase Executor Contract", function () {
         });
 
         it("Should revert since the Purchaser did not send the correct amount of USDC tokens", async function () {
-
             await expect(PurchaseExecutorDeployed.execute_purchase(
                 USDCTokenMockDeployed.address,
                 SarcoTokenMockDeployed.address,
@@ -325,14 +324,14 @@ describe("Purchase Executor Contract", function () {
 
         it("Should revert - offer not started", async function () {
             await expect(PurchaseExecutorDeployed.recover_unsold_tokens(SarcoTokenMockDeployed.address))
-                .to.be.revertedWith("Offer has not started");
+                .to.be.revertedWith("PurchaseExecutor: Purchase offer has not started");
         });
 
         it("Should revert - offer not expired", async function () {
             await SarcoTokenMockDeployed.mint(PurchaseExecutorDeployed.address, 360);
             await PurchaseExecutorDeployed.start(SarcoTokenMockDeployed.address);
             await expect(PurchaseExecutorDeployed.recover_unsold_tokens(SarcoTokenMockDeployed.address))
-                .to.be.revertedWith("Offer has not yet expired");
+                .to.be.revertedWith("PurchaseExecutor: Purchase offer has not yet expired");
         });
 
         it("Should emit TokensRecovered event", async function () {
