@@ -36,12 +36,7 @@ contract PurchaseExecutor {
 
     uint256 public constant USDC_TO_SARCO_RATE_PRECISION = 10**18;
 
-    address public constant SARCO_TOKEN =
-        0x5A98FcBEA516Cf06857215779Fd812CA3beF1B32;
-    address public constant SARCO_DAO =
-        0xf73a1260d222f447210581DDf212D915c09a3249;
-    address public constant GENERAL_VESTING_CONTRACT =
-        0x3e40D73EB977Dc6a537aF587D48316feE66E9C8c;
+    address public SARCO_DAO;
 
     // how much SARCO in one USDC, USDC_TO_SARCO_RATE_PERCISION being 1
     uint256 public usdc_to_sarco_rate;
@@ -69,7 +64,8 @@ contract PurchaseExecutor {
         uint256 _offer_expiration_delay,
         address[] memory _sarco_purchasers,
         uint256[] memory _sarco_allocations,
-        uint256 _sarco_allocations_total
+        uint256 _sarco_allocations_total,
+        address _sarco_dao
     ) external {
         require(
             _usdc_to_sarco_rate > 0,
@@ -89,12 +85,13 @@ contract PurchaseExecutor {
         vesting_end_delay = _vesting_end_delay;
         offer_expiration_delay = _offer_expiration_delay;
         sarco_allocations_total = _sarco_allocations_total;
+        SARCO_DAO = _sarco_dao;
 
         uint256 allocations_sum = 0;
 
         for (uint256 i = 0; i < _sarco_purchasers.length; i++) {
             address purchaser = _sarco_purchasers[i];
-            if (purchaser == 0x0000000000000000000000000000000000000000) {
+            if (purchaser == address(0)) {
                 break;
             }
             require(
