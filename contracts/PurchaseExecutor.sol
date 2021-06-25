@@ -184,11 +184,11 @@ contract PurchaseExecutor {
         // check allocation
         require(sarco_allocation > 0, "PurchaseExecutor: you have no Sarco allocation");
 
-        // forward USDC cost of the purchase to the DAO contract
-        usdc_token.safeTransferFrom(msg.sender, SARCO_DAO, usdc_cost);
-
         // clear purchaser allocation
         sarco_allocations[_sarco_receiver] = 0;
+
+        // forward USDC cost of the purchase to the DAO contract
+        usdc_token.safeTransferFrom(msg.sender, SARCO_DAO, usdc_cost);
 
         //approve tokens to general vesting contract...
         // will need to just approve and call deposit
