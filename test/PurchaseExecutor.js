@@ -37,11 +37,10 @@ describe("Purchase Executor Contract", function () {
         // tests. It receives the test name, and a callback function.
 
         it("Should set constants", async function () {
-            expect(await PurchaseExecutorDeployed.MAX_PURCHASERS()).to.equal(3);
             expect(await PurchaseExecutorDeployed.USDC_TO_SARCO_RATE_PRECISION()).to.equal("1000000000000000000");
-            expect(await PurchaseExecutorDeployed.SARCO_TOKEN()).to.equal("0x5A98FcBEA516Cf06857215779Fd812CA3beF1B32");
-            expect(await PurchaseExecutorDeployed.SARCO_DAO()).to.equal("0xf73a1260d222f447210581DDf212D915c09a3249");
-            expect(await PurchaseExecutorDeployed.GENERAL_VESTING_CONTRACT()).to.equal("0x3e40D73EB977Dc6a537aF587D48316feE66E9C8c");
+            // expect(await PurchaseExecutorDeployed.SARCO_TOKEN()).to.equal("0x5A98FcBEA516Cf06857215779Fd812CA3beF1B32");
+            // expect(await PurchaseExecutorDeployed.SARCO_DAO()).to.equal("0xf73a1260d222f447210581DDf212D915c09a3249");
+            // expect(await PurchaseExecutorDeployed.GENERAL_VESTING_CONTRACT()).to.equal("0x3e40D73EB977Dc6a537aF587D48316feE66E9C8c");
         });
     });
 
@@ -55,7 +54,8 @@ describe("Purchase Executor Contract", function () {
                     1000,
                     ["0x5A98FcBEA516Cf06857215779Fd812CA3beF1B32", "0xf73a1260d222f447210581DDf212D915c09a3249", "0x3e40D73EB977Dc6a537aF587D48316feE66E9C8c"],
                     [110, 120, 130],
-                    360
+                    360,
+                    "0xf73a1260d222f447210581DDf212D915c09a3249"
                 )).to.be.revertedWith('PurchaseExecutor: rate must be greater than 0');
         });
 
@@ -67,7 +67,8 @@ describe("Purchase Executor Contract", function () {
                     1000,
                     ["0x5A98FcBEA516Cf06857215779Fd812CA3beF1B32", "0xf73a1260d222f447210581DDf212D915c09a3249", "0x3e40D73EB977Dc6a537aF587D48316feE66E9C8c"],
                     [110, 120, 130],
-                    360
+                    360,
+                    "0xf73a1260d222f447210581DDf212D915c09a3249"
                 )).to.be.revertedWith('PurchaseExecutor: end_delay must happen in the future');
         });
 
@@ -79,7 +80,8 @@ describe("Purchase Executor Contract", function () {
                     0,
                     ["0x5A98FcBEA516Cf06857215779Fd812CA3beF1B32", "0xf73a1260d222f447210581DDf212D915c09a3249", "0x3e40D73EB977Dc6a537aF587D48316feE66E9C8c"],
                     [110, 120, 130],
-                    360
+                    360,
+                    "0xf73a1260d222f447210581DDf212D915c09a3249"
                 )).to.be.revertedWith("PurchaseExecutor: offer_expiration must be greater than 0");
         });
 
@@ -90,7 +92,8 @@ describe("Purchase Executor Contract", function () {
                 1000,
                 ["0x5A98FcBEA516Cf06857215779Fd812CA3beF1B32", "0xf73a1260d222f447210581DDf212D915c09a3249", "0x3e40D73EB977Dc6a537aF587D48316feE66E9C8c"],
                 [110, 120, 130],
-                360
+                360,
+                "0xf73a1260d222f447210581DDf212D915c09a3249"
             );
             expect(await PurchaseExecutorDeployed.usdc_to_sarco_rate()).to.equal(1);
             expect(await PurchaseExecutorDeployed.sarco_allocations_total()).to.equal(360);
@@ -103,7 +106,8 @@ describe("Purchase Executor Contract", function () {
                 1000,
                 ["0x5A98FcBEA516Cf06857215779Fd812CA3beF1B32", "0xf73a1260d222f447210581DDf212D915c09a3249", "0x3e40D73EB977Dc6a537aF587D48316feE66E9C8c"],
                 [110, 120, 130],
-                360
+                360,
+                "0xf73a1260d222f447210581DDf212D915c09a3249"
             );
 
             await expect(
@@ -113,7 +117,8 @@ describe("Purchase Executor Contract", function () {
                     1000,
                     ["0x5A98FcBEA516Cf06857215779Fd812CA3beF1B32", "0xf73a1260d222f447210581DDf212D915c09a3249", "0x3e40D73EB977Dc6a537aF587D48316feE66E9C8c"],
                     [110, 120, 130],
-                    360
+                    360,
+                    "0xf73a1260d222f447210581DDf212D915c09a3249"
                 )).to.be.revertedWith("PurchaseExecutor: Allocation has already been set");
         });
 
@@ -125,7 +130,8 @@ describe("Purchase Executor Contract", function () {
                     1000,
                     ["0x5A98FcBEA516Cf06857215779Fd812CA3beF1B32", "0xf73a1260d222f447210581DDf212D915c09a3249", "0x3e40D73EB977Dc6a537aF587D48316feE66E9C8c"],
                     [0, 120, 130],
-                    360
+                    360,
+                    "0xf73a1260d222f447210581DDf212D915c09a3249"
                 )).to.be.revertedWith("PurchaseExecutor: No allocated Sarco tokens for address");
         });
 
@@ -137,7 +143,8 @@ describe("Purchase Executor Contract", function () {
                     1000,
                     ["0x5A98FcBEA516Cf06857215779Fd812CA3beF1B32", "0xf73a1260d222f447210581DDf212D915c09a3249", "0x3e40D73EB977Dc6a537aF587D48316feE66E9C8c"],
                     [110, 120, 130],
-                    350 // total should be 360
+                    350, // total should be 360
+                    "0xf73a1260d222f447210581DDf212D915c09a3249"
                 )).to.be.revertedWith("PurchaseExecutor: Allocations_total does not equal the sum of passed allocations");
         });
     });
@@ -155,7 +162,8 @@ describe("Purchase Executor Contract", function () {
                 1000,
                 ["0x5A98FcBEA516Cf06857215779Fd812CA3beF1B32", "0xf73a1260d222f447210581DDf212D915c09a3249", "0x3e40D73EB977Dc6a537aF587D48316feE66E9C8c"],
                 [110, 120, 130],
-                360
+                360,
+                "0xf73a1260d222f447210581DDf212D915c09a3249"
             );
             await expect(
                 PurchaseExecutorDeployed.start(SarcoTokenMockDeployed.address))
@@ -169,7 +177,8 @@ describe("Purchase Executor Contract", function () {
                 1000,
                 ["0x5A98FcBEA516Cf06857215779Fd812CA3beF1B32", "0xf73a1260d222f447210581DDf212D915c09a3249", "0x3e40D73EB977Dc6a537aF587D48316feE66E9C8c"],
                 [110, 120, 130],
-                360
+                360,
+                "0xf73a1260d222f447210581DDf212D915c09a3249"
             );
             await SarcoTokenMockDeployed.mint(PurchaseExecutorDeployed.address, 360);
             await expect(PurchaseExecutorDeployed.start(SarcoTokenMockDeployed.address))
@@ -183,7 +192,8 @@ describe("Purchase Executor Contract", function () {
                 1000,
                 ["0x5A98FcBEA516Cf06857215779Fd812CA3beF1B32", "0xf73a1260d222f447210581DDf212D915c09a3249", "0x3e40D73EB977Dc6a537aF587D48316feE66E9C8c"],
                 [110, 120, 130],
-                360
+                360,
+                "0xf73a1260d222f447210581DDf212D915c09a3249"
             );
             await SarcoTokenMockDeployed.mint(PurchaseExecutorDeployed.address, 360);
             await PurchaseExecutorDeployed.start(SarcoTokenMockDeployed.address);
@@ -197,7 +207,8 @@ describe("Purchase Executor Contract", function () {
                 1000,
                 ["0x5A98FcBEA516Cf06857215779Fd812CA3beF1B32", "0xf73a1260d222f447210581DDf212D915c09a3249", "0x3e40D73EB977Dc6a537aF587D48316feE66E9C8c"],
                 [110, 120, 130],
-                360
+                360,
+                "0xf73a1260d222f447210581DDf212D915c09a3249"
             );
             await SarcoTokenMockDeployed.mint(PurchaseExecutorDeployed.address, 360);
             await PurchaseExecutorDeployed.start(SarcoTokenMockDeployed.address);
@@ -223,7 +234,8 @@ describe("Purchase Executor Contract", function () {
                 1000,
                 [owner.address, "0xf73a1260d222f447210581DDf212D915c09a3249", "0x3e40D73EB977Dc6a537aF587D48316feE66E9C8c"],
                 [110, 120, 130],
-                360
+                360,
+                "0xf73a1260d222f447210581DDf212D915c09a3249"
             );
             await SarcoTokenMockDeployed.mint(PurchaseExecutorDeployed.address, 360);
             await PurchaseExecutorDeployed.start(SarcoTokenMockDeployed.address);
@@ -318,7 +330,8 @@ describe("Purchase Executor Contract", function () {
                 1000,
                 [owner.address, "0xf73a1260d222f447210581DDf212D915c09a3249", "0x3e40D73EB977Dc6a537aF587D48316feE66E9C8c"],
                 [110, 120, 130],
-                360
+                360,
+                "0xf73a1260d222f447210581DDf212D915c09a3249"
             );
         });
 
