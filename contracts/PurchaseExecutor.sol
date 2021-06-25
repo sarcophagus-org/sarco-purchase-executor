@@ -185,13 +185,7 @@ contract PurchaseExecutor {
         require(sarco_allocation > 0, "PurchaseExecutor: you have no Sarco allocation");
 
         // forward USDC cost of the purchase to the DAO contract
-        uint256 before_Balance = usdc_token.balanceOf(SARCO_DAO);
         usdc_token.safeTransferFrom(msg.sender, SARCO_DAO, usdc_cost);
-        uint256 after_balance = usdc_token.balanceOf(SARCO_DAO);
-
-        // check if usdc recieved covers usdc cost
-        uint256 _usdc_received = after_balance - before_Balance;
-        require(_usdc_received >= usdc_cost, "PurchaseExecutor: insufficent USDC to make Sarco Purchase");
 
         // clear purchaser allocation
         sarco_allocations[_sarco_receiver] = 0;
