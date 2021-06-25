@@ -187,14 +187,10 @@ contract PurchaseExecutor {
         return _get_allocation(msg.sender);
     }
 
-    // TODO: remove last three parameters
     function _execute_purchase(
-        address _sarco_receiver,
-        IERC20 usdc_token,
-        IERC20 sarco_token,
-        address general_token_vesting_address
+        address _sarco_receiver
     ) internal {
-        _start_unless_started(sarco_token);
+        _start_unless_started();
         require(block.timestamp < offer_expires_at, "PurchaseExecutor: offer expired");
 
         (uint256 sarco_allocation, uint256 usdc_cost) = _get_allocation(_sarco_receiver);
@@ -206,22 +202,21 @@ contract PurchaseExecutor {
         sarco_allocations[_sarco_receiver] = 0;
 
         // forward USDC cost of the purchase to the DAO contract
-        usdc_token.safeTransferFrom(msg.sender, SARCO_DAO, usdc_cost);
+        USDC_TOKEN.safeTransferFrom(msg.sender, SARCO_DAO, usdc_cost);
 
         //approve tokens to general vesting contract...
         // will need to just approve and call deposit
-        IERC20(sarco_token).approve(
-            general_token_vesting_address,
+        SARCO_TOKEN.approve(
+            GENERAL_TOKEN_VESTING,
             sarco_allocation
         );
 
-        // if it returns a vesting_id
         // must include tokenvesting contract address + vesting_end_delay
-        GeneralTokenVesting(general_token_vesting_address).startVest(
+        GeneralTokenVesting(GENERAL_TOKEN_VESTING).startVest(
             _sarco_receiver,
             sarco_allocation,
             vesting_end_delay,
-            sarco_token
+            SARCO_TOKEN
         );
 
         emit PurchaseExecuted(_sarco_receiver, sarco_allocation, usdc_cost);
@@ -232,15 +227,9 @@ contract PurchaseExecutor {
      * @dev Purchases Sarco for the specified address (defaults to message sender) in exchange for USDC.
      */
     function execute_purchase(
-        IERC20 usdc_token,
-        IERC20 sarco_token,
-        address general_token_vesting_address
     ) external {
         _execute_purchase(
-            msg.sender,
-            usdc_token,
-            sarco_token,
-            general_token_vesting_address
+            msg.sender
         );
     }
 
