@@ -168,7 +168,6 @@ contract PurchaseExecutor {
 
     function _start_unless_started() internal {
         if (offer_started_at == 0) {
-            // Should be sarco/token
             require(
                 SARCO_TOKEN.balanceOf(address(this)) == sarco_allocations_total,
                 "PurchaseExecutor: not funded with Sarco Tokens"
@@ -242,8 +241,10 @@ contract PurchaseExecutor {
         _execute_purchase(msg.sender);
     }
 
+    /**
+     * @dev If unsold_sarco_amount > 0 after the offer expired, sarco tokens are send back to sacro_dao.
+     */
     function recover_unsold_tokens() external {
-        // TODO: confirm and be really sure that these two checks designate "after the window is over"
         require(
             offer_started(),
             "PurchaseExecutor: Purchase offer has not started"
