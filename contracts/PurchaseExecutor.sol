@@ -95,9 +95,10 @@ contract PurchaseExecutor {
 
         for (uint256 i = 0; i < _sarco_purchasers.length; i++) {
             address purchaser = _sarco_purchasers[i];
-            if (purchaser == address(0)) {
-                break;
-            }
+            require(
+                purchaser != address(0),
+                "PurchaseExecutor: zero address passed in"
+            );
             require(
                 sarco_allocations[purchaser] == 0,
                 "PurchaseExecutor: Allocation has already been set"
