@@ -79,6 +79,10 @@ contract PurchaseExecutor {
             _offer_expiration_delay > 0,
             "PurchaseExecutor: offer_expiration must be greater than 0"
         );
+        require(
+            _sarco_purchasers.length == _sarco_allocations.length,
+            "PurchaseExecutor: purchasers and allocations lengths must be equal"
+        );
 
         // Set global variables
         usdc_to_sarco_rate = _usdc_to_sarco_rate;
