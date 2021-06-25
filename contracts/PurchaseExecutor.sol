@@ -49,6 +49,7 @@ contract PurchaseExecutor {
     uint256 public offer_expires_at;
     uint256 public vesting_end_delay;
 
+    // TODO: pass in sarco token address and token vesting address
     /**
      * @dev inits/sets sarco purchase enviorment
      * @param _usdc_to_sarco_rate How much SARCO one gets for one USDC (multiplied by 10**18)
@@ -138,6 +139,7 @@ contract PurchaseExecutor {
     }
 
     //should be sarco token - extra param
+    // TODO: remove token parameter
     function _start_unless_started(IERC20 token) internal {
         if (offer_started_at == 0) {
             // Should be sarco/token
@@ -154,6 +156,7 @@ contract PurchaseExecutor {
         }
     }
 
+    // TODO: remove token parameter
     /**
      * @notice Starts the offer if it 1) hasn't been started yet and 2) has received funding in full.
      */
@@ -170,6 +173,7 @@ contract PurchaseExecutor {
         return _get_allocation(msg.sender);
     }
 
+    // TODO: remove last three parameters
     function _execute_purchase(
         address _sarco_receiver,
         IERC20 usdc_token,
@@ -209,10 +213,10 @@ contract PurchaseExecutor {
         emit PurchaseExecuted(_sarco_receiver, sarco_allocation, usdc_cost);
     }
 
+    // TODO: remove all parameters
     /**
      * @dev Purchases Sarco for the specified address (defaults to message sender) in exchange for USDC.
      */
-
     function execute_purchase(
         IERC20 usdc_token,
         IERC20 sarco_token,
@@ -226,7 +230,9 @@ contract PurchaseExecutor {
         );
     }
 
+    // TODO: remove token parameter
     function recover_unsold_tokens(IERC20 token) external {
+        // TODO: confirm and be really sure that these two checks designate "after the window is over"
         require(offer_started(), "PurchaseExecutor: Purchase offer has not started");
         require(offer_expired(), "PurchaseExecutor: Purchase offer has not yet expired");
 
