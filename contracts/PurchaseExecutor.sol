@@ -174,8 +174,8 @@ contract PurchaseExecutor {
     /**
      * @notice Starts the offer if it 1) hasn't been started yet and 2) has received funding in full.
      */
-    function start(IERC20 token) external {
-        _start_unless_started(token);
+    function start() external {
+        _start_unless_started();
     }
 
     /**
