@@ -233,15 +233,14 @@ contract PurchaseExecutor {
         );
     }
 
-    // TODO: remove token parameter
-    function recover_unsold_tokens(IERC20 token) external {
+    function recover_unsold_tokens() external {
         // TODO: confirm and be really sure that these two checks designate "after the window is over"
         require(offer_started(), "PurchaseExecutor: Purchase offer has not started");
         require(offer_expired(), "PurchaseExecutor: Purchase offer has not yet expired");
 
-        uint256 unsold_sarco_amount = IERC20(token).balanceOf(address(this));
+        uint256 unsold_sarco_amount = SARCO_TOKEN.balanceOf(address(this));
         if (unsold_sarco_amount > 0) {
-            IERC20(token).safeTransfer(SARCO_DAO, unsold_sarco_amount);
+            SARCO_TOKEN.safeTransfer(SARCO_DAO, unsold_sarco_amount);
             emit TokensRecovered(unsold_sarco_amount);
         }
     }
