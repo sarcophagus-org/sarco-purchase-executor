@@ -154,13 +154,11 @@ contract PurchaseExecutor {
         return block.timestamp >= offer_expires_at;
     }
 
-    //should be sarco token - extra param
-    // TODO: remove token parameter
-    function _start_unless_started(IERC20 token) internal {
+    function _start_unless_started() internal {
         if (offer_started_at == 0) {
             // Should be sarco/token
             require(
-                IERC20(token).balanceOf(address(this)) ==
+                SARCO_TOKEN.balanceOf(address(this)) ==
                     sarco_allocations_total,
                 "PurchaseExecutor: not funded with Sarco Tokens"
             );
