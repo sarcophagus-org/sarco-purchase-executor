@@ -179,9 +179,7 @@ contract PurchaseExecutor {
         _start_unless_started(sarco_token);
         require(block.timestamp < offer_expires_at, "PurchaseExecutor: offer expired");
 
-        uint256 sarco_allocation = 0;
-        uint256 usdc_cost = 0;
-        (sarco_allocation, usdc_cost) = _get_allocation(_sarco_receiver);
+        (uint256 sarco_allocation, uint256 usdc_cost) = _get_allocation(_sarco_receiver);
 
         // check allocation
         require(sarco_allocation > 0, "PurchaseExecutor: you have no Sarco allocation");
