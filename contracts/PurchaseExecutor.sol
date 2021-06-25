@@ -129,11 +129,11 @@ contract PurchaseExecutor {
         return (sarco_allocation, usdc_cost);
     }
 
-    function offer_started() external view returns (bool) {
+    function offer_started() public view returns (bool) {
         return offer_started_at != 0;
     }
 
-    function offer_expired() external view returns (bool) {
+    function offer_expired() public view returns (bool) {
         return block.timestamp >= offer_expires_at;
     }
 
@@ -227,11 +227,9 @@ contract PurchaseExecutor {
     }
 
     function recover_unsold_tokens(IERC20 token) external {
-        require(offer_started_at != 0, "PurchaseExecutor: Purchase offer has not started");
-        require(
-            block.timestamp >= offer_expires_at,
-            "PurchaseExecutor: Purchase offer has not yet expired"
-        );
+        require(offer_started(), "PurchaseExecutor: Purchase offer has not started");
+        require(offer_expired(), "PurchaseExecutor: Purchase offer has not yet expired");
+
         uint256 unsold_sarco_amount = IERC20(token).balanceOf(address(this));
         if (unsold_sarco_amount > 0) {
             IERC20(token).safeTransfer(SARCO_DAO, unsold_sarco_amount);
