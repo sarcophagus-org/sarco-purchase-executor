@@ -66,7 +66,7 @@ contract PurchaseExecutor {
      * @param _general_token_vesting General Vesting contract address
      * @param _sarco_dao Sarco DAO contract address
      */
-    constructor(        
+    constructor(
         uint256 _usdc_to_sarco_rate,
         uint256 _vesting_end_delay,
         uint256 _offer_expiration_delay,
@@ -77,61 +77,73 @@ contract PurchaseExecutor {
         address _sarco_token,
         address _general_token_vesting,
         address _sarco_dao
-        ) {
-            require(
+    ) {
+        require(
             _usdc_to_sarco_rate > 0,
             "PurchaseExecutor: rate must be greater than 0"
-            );
-            require(
-                _vesting_end_delay > 0,
-                "PurchaseExecutor: end_delay must happen in the future"
-            );
-            require(
-                _offer_expiration_delay > 0,
-                "PurchaseExecutor: offer_expiration must be greater than 0"
-            );
-            require(
-                _sarco_purchasers.length == _sarco_allocations.length,
-                "PurchaseExecutor: purchasers and allocations lengths must be equal"
-            );
-            require(_usdc_token != address(0), "PurchaseExecutor: _usdc_token cannot be 0 address");
-            require(_sarco_token != address(0), "PurchaseExecutor: _sarco_token cannot be 0 address");
-            require(_general_token_vesting != address(0), "PurchaseExecutor: _general_token_vesting cannot be 0 address");
-            require(_sarco_dao != address(0), "PurchaseExecutor: _sarco_dao cannot be 0 address");
-             // Set global variables
-            usdc_to_sarco_rate = _usdc_to_sarco_rate;
-            vesting_end_delay = _vesting_end_delay;
-            offer_expiration_delay = _offer_expiration_delay;
-            sarco_allocations_total = _sarco_allocations_total;
-            USDC_TOKEN = IERC20(_usdc_token);
-            SARCO_TOKEN = IERC20(_sarco_token);
-            GENERAL_TOKEN_VESTING = _general_token_vesting;
-            SARCO_DAO = _sarco_dao;
+        );
+        require(
+            _vesting_end_delay > 0,
+            "PurchaseExecutor: end_delay must happen in the future"
+        );
+        require(
+            _offer_expiration_delay > 0,
+            "PurchaseExecutor: offer_expiration must be greater than 0"
+        );
+        require(
+            _sarco_purchasers.length == _sarco_allocations.length,
+            "PurchaseExecutor: purchasers and allocations lengths must be equal"
+        );
+        require(
+            _usdc_token != address(0),
+            "PurchaseExecutor: _usdc_token cannot be 0 address"
+        );
+        require(
+            _sarco_token != address(0),
+            "PurchaseExecutor: _sarco_token cannot be 0 address"
+        );
+        require(
+            _general_token_vesting != address(0),
+            "PurchaseExecutor: _general_token_vesting cannot be 0 address"
+        );
+        require(
+            _sarco_dao != address(0),
+            "PurchaseExecutor: _sarco_dao cannot be 0 address"
+        );
+        // Set global variables
+        usdc_to_sarco_rate = _usdc_to_sarco_rate;
+        vesting_end_delay = _vesting_end_delay;
+        offer_expiration_delay = _offer_expiration_delay;
+        sarco_allocations_total = _sarco_allocations_total;
+        USDC_TOKEN = IERC20(_usdc_token);
+        SARCO_TOKEN = IERC20(_sarco_token);
+        GENERAL_TOKEN_VESTING = _general_token_vesting;
+        SARCO_DAO = _sarco_dao;
 
-            uint256 allocations_sum = 0;
+        uint256 allocations_sum = 0;
 
-            for (uint256 i = 0; i < _sarco_purchasers.length; i++) {
-                address purchaser = _sarco_purchasers[i];
-                require(
-                    purchaser != address(0),
-                    "PurchaseExecutor: zero address passed in"
-                );
-                require(
-                    sarco_allocations[purchaser] == 0,
-                    "PurchaseExecutor: Allocation has already been set"
-                );
-                uint256 allocation = _sarco_allocations[i];
-                require(
-                    allocation > 0,
-                    "PurchaseExecutor: No allocated Sarco tokens for address"
-                );
-                sarco_allocations[purchaser] = allocation;
-                allocations_sum += allocation;
-            }
+        for (uint256 i = 0; i < _sarco_purchasers.length; i++) {
+            address purchaser = _sarco_purchasers[i];
             require(
-                allocations_sum == _sarco_allocations_total,
-                "PurchaseExecutor: Allocations_total does not equal the sum of passed allocations"
+                purchaser != address(0),
+                "PurchaseExecutor: zero address passed in"
             );
+            require(
+                sarco_allocations[purchaser] == 0,
+                "PurchaseExecutor: Allocation has already been set"
+            );
+            uint256 allocation = _sarco_allocations[i];
+            require(
+                allocation > 0,
+                "PurchaseExecutor: No allocated Sarco tokens for address"
+            );
+            sarco_allocations[purchaser] = allocation;
+            allocations_sum += allocation;
+        }
+        require(
+            allocations_sum == _sarco_allocations_total,
+            "PurchaseExecutor: Allocations_total does not equal the sum of passed allocations"
+        );
     }
 
     //should this be public - msg.sender can only check
@@ -158,8 +170,7 @@ contract PurchaseExecutor {
         if (offer_started_at == 0) {
             // Should be sarco/token
             require(
-                SARCO_TOKEN.balanceOf(address(this)) ==
-                    sarco_allocations_total,
+                SARCO_TOKEN.balanceOf(address(this)) == sarco_allocations_total,
                 "PurchaseExecutor: not funded with Sarco Tokens"
             );
             uint256 started_at = block.timestamp;
@@ -170,7 +181,6 @@ contract PurchaseExecutor {
         }
     }
 
-    // TODO: remove token parameter
     /**
      * @notice Starts the offer if it 1) hasn't been started yet and 2) has received funding in full.
      */
@@ -187,16 +197,22 @@ contract PurchaseExecutor {
         return _get_allocation(msg.sender);
     }
 
-    function _execute_purchase(
-        address _sarco_receiver
-    ) internal {
+    function _execute_purchase(address _sarco_receiver) internal {
         _start_unless_started();
-        require(block.timestamp < offer_expires_at, "PurchaseExecutor: offer expired");
+        require(
+            block.timestamp < offer_expires_at,
+            "PurchaseExecutor: offer expired"
+        );
 
-        (uint256 sarco_allocation, uint256 usdc_cost) = _get_allocation(_sarco_receiver);
+        (uint256 sarco_allocation, uint256 usdc_cost) = _get_allocation(
+            _sarco_receiver
+        );
 
         // check allocation
-        require(sarco_allocation > 0, "PurchaseExecutor: you have no Sarco allocation");
+        require(
+            sarco_allocation > 0,
+            "PurchaseExecutor: you have no Sarco allocation"
+        );
 
         // clear purchaser allocation
         sarco_allocations[_sarco_receiver] = 0;
@@ -206,10 +222,7 @@ contract PurchaseExecutor {
 
         //approve tokens to general vesting contract...
         // will need to just approve and call deposit
-        SARCO_TOKEN.approve(
-            GENERAL_TOKEN_VESTING,
-            sarco_allocation
-        );
+        SARCO_TOKEN.approve(GENERAL_TOKEN_VESTING, sarco_allocation);
 
         // must include tokenvesting contract address + vesting_end_delay
         GeneralTokenVesting(GENERAL_TOKEN_VESTING).startVest(
@@ -222,21 +235,23 @@ contract PurchaseExecutor {
         emit PurchaseExecuted(_sarco_receiver, sarco_allocation, usdc_cost);
     }
 
-    // TODO: remove all parameters
     /**
      * @dev Purchases Sarco for the specified address (defaults to message sender) in exchange for USDC.
      */
-    function execute_purchase(
-    ) external {
-        _execute_purchase(
-            msg.sender
-        );
+    function execute_purchase() external {
+        _execute_purchase(msg.sender);
     }
 
     function recover_unsold_tokens() external {
         // TODO: confirm and be really sure that these two checks designate "after the window is over"
-        require(offer_started(), "PurchaseExecutor: Purchase offer has not started");
-        require(offer_expired(), "PurchaseExecutor: Purchase offer has not yet expired");
+        require(
+            offer_started(),
+            "PurchaseExecutor: Purchase offer has not started"
+        );
+        require(
+            offer_expired(),
+            "PurchaseExecutor: Purchase offer has not yet expired"
+        );
 
         uint256 unsold_sarco_amount = SARCO_TOKEN.balanceOf(address(this));
         if (unsold_sarco_amount > 0) {
