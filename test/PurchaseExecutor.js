@@ -37,7 +37,6 @@ describe("Purchase Executor Contract", function () {
         // tests. It receives the test name, and a callback function.
 
         it("Should set constants", async function () {
-            expect(await PurchaseExecutorDeployed.MAX_PURCHASERS()).to.equal(3);
             expect(await PurchaseExecutorDeployed.USDC_TO_SARCO_RATE_PRECISION()).to.equal("1000000000000000000");
             expect(await PurchaseExecutorDeployed.SARCO_TOKEN()).to.equal("0x5A98FcBEA516Cf06857215779Fd812CA3beF1B32");
             expect(await PurchaseExecutorDeployed.SARCO_DAO()).to.equal("0xf73a1260d222f447210581DDf212D915c09a3249");

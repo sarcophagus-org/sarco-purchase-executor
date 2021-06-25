@@ -34,8 +34,6 @@ contract PurchaseExecutor {
         uint256 amount
     );
 
-    // What are the total Max_purchasers
-    uint256 public constant MAX_PURCHASERS = 3;
     uint256 public constant USDC_TO_SARCO_RATE_PRECISION = 10**18;
 
     address public constant SARCO_TOKEN =
@@ -94,7 +92,7 @@ contract PurchaseExecutor {
 
         uint256 allocations_sum = 0;
 
-        for (uint256 i = 0; i < MAX_PURCHASERS; i++) {
+        for (uint256 i = 0; i < _sarco_purchasers.length; i++) {
             address purchaser = _sarco_purchasers[i];
             if (purchaser == 0x0000000000000000000000000000000000000000) {
                 break;
