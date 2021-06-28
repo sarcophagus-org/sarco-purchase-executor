@@ -84,7 +84,7 @@ contract PurchaseExecutor {
         );
         require(
             _vesting_end_delay > 0,
-            "PurchaseExecutor: end_delay must happen in the future"
+            "PurchaseExecutor: end_delay must be greater than 0"
         );
         require(
             _offer_expiration_delay > 0,
@@ -126,7 +126,7 @@ contract PurchaseExecutor {
             address purchaser = _sarco_purchasers[i];
             require(
                 purchaser != address(0),
-                "PurchaseExecutor: zero address passed in"
+                "PurchaseExecutor: Purchaser Cannot be the Zero address"
             );
             require(
                 sarco_allocations[purchaser] == 0,
@@ -166,23 +166,22 @@ contract PurchaseExecutor {
         return block.timestamp >= offer_expires_at;
     }
 
+    /**
+     * @notice Starts the offer if it 1) hasn't been started yet and 2) has received funding in full.
+     */
     function _start_unless_started() internal {
         if (offer_started_at == 0) {
             require(
                 SARCO_TOKEN.balanceOf(address(this)) == sarco_allocations_total,
                 "PurchaseExecutor: not funded with Sarco Tokens"
             );
-            uint256 started_at = block.timestamp;
-            uint256 expires_at = started_at + offer_expiration_delay;
-            offer_started_at = started_at;
-            offer_expires_at = expires_at;
-            emit OfferStarted(started_at, expires_at);
+
+            offer_started_at = block.timestamp;
+            offer_expires_at = block.timestamp + offer_expiration_delay;
+            emit OfferStarted(offer_started_at, offer_expires_at);
         }
     }
 
-    /**
-     * @notice Starts the offer if it 1) hasn't been started yet and 2) has received funding in full.
-     */
     function start() external {
         _start_unless_started();
     }
