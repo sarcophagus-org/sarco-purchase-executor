@@ -58,9 +58,9 @@ contract PurchaseExecutor {
      * @param _usdc_to_sarco_rate How much SARCO one gets for one USDC (multiplied by 10**18)
      * @param _vesting_end_delay Delay from the purchase moment to the vesting end moment, in seconds
      * @param _offer_expiration_delay Delay from the contract deployment to offer expiration, in seconds
-     * @param _sarco_purchasers  List of valid SARCO purchasers, padded by zeroes to the length of 50
-     * @param _sarco_allocations List of SARCO token allocations, padded by zeroes to the length of 50
-     * @param _sarco_allocations_total Checksum of SARCO token allocations
+     * @param _sarco_purchasers  List of valid SARCO purchasers
+     * @param _sarco_allocations List of SARCO token allocations, should include decimals 10 ** 18
+     * @param _sarco_allocations_total Checksum of SARCO token allocations, should include decimals 10 ** 18
      * @param _usdc_token USDC token address
      * @param _sarco_token Sarco token address
      * @param _general_token_vesting General Vesting contract address
@@ -153,8 +153,8 @@ contract PurchaseExecutor {
         returns (uint256, uint256)
     {
         uint256 sarco_allocation = sarco_allocations[_sarco_receiver];
-        uint256 usdc_cost = (sarco_allocation * USDC_TO_SARCO_RATE_PRECISION) /
-            usdc_to_sarco_rate;
+        uint256 usdc_cost = (sarco_allocation /
+            usdc_to_sarco_rate) / 10 ** (18-6);
         return (sarco_allocation, usdc_cost);
     }
 
@@ -170,16 +170,15 @@ contract PurchaseExecutor {
      * @notice Starts the offer if it 1) hasn't been started yet and 2) has received funding in full.
      */
     function _start_unless_started() internal {
-        if (offer_started_at == 0) {
-            require(
-                SARCO_TOKEN.balanceOf(address(this)) == sarco_allocations_total,
-                "PurchaseExecutor: not funded with Sarco Tokens"
-            );
+        require(offer_started_at == 0, "PurchaseExecutor: Offer has already started");
+        require(
+            SARCO_TOKEN.balanceOf(address(this)) == sarco_allocations_total,
+            "PurchaseExecutor: not funded with Sarco Tokens"
+        );
 
-            offer_started_at = block.timestamp;
-            offer_expires_at = block.timestamp + offer_expiration_delay;
-            emit OfferStarted(offer_started_at, offer_expires_at);
-        }
+        offer_started_at = block.timestamp;
+        offer_expires_at = block.timestamp + offer_expiration_delay;
+        emit OfferStarted(offer_started_at, offer_expires_at);  
     }
 
     function start() external {
@@ -195,8 +194,11 @@ contract PurchaseExecutor {
         return _get_allocation(msg.sender);
     }
 
+    //Todo sarcp allocation should be multiplied 
     function _execute_purchase(address _sarco_receiver) internal {
-        _start_unless_started();
+        if (offer_started_at == 0) {
+            _start_unless_started();
+        }
         require(
             block.timestamp < offer_expires_at,
             "PurchaseExecutor: offer expired"
@@ -216,7 +218,7 @@ contract PurchaseExecutor {
         sarco_allocations[_sarco_receiver] = 0;
 
         // forward USDC cost of the purchase to the DAO contract
-        USDC_TOKEN.safeTransferFrom(msg.sender, SARCO_DAO, usdc_cost);
+        USDC_TOKEN.safeTransferFrom(_sarco_receiver, SARCO_DAO, usdc_cost);
 
         //approve tokens to general vesting contract...
         // will need to just approve and call deposit
@@ -254,9 +256,9 @@ contract PurchaseExecutor {
         );
 
         uint256 unsold_sarco_amount = SARCO_TOKEN.balanceOf(address(this));
-        if (unsold_sarco_amount > 0) {
-            SARCO_TOKEN.safeTransfer(SARCO_DAO, unsold_sarco_amount);
-            emit TokensRecovered(unsold_sarco_amount);
-        }
+        require(unsold_sarco_amount > 0, "PurchaseExecutor: There are no tokens to recover");
+        SARCO_TOKEN.safeTransfer(SARCO_DAO, unsold_sarco_amount);
+        emit TokensRecovered(unsold_sarco_amount);
+        
     }
 }
