@@ -6,8 +6,8 @@ const Sarcoabi = require('../contractabi/SarcoABI.json');
 const USDCabi = require('../contractabi/USDCABI.json');
 const GeneralVestingabi = require('../contractabi/GeneralTokenVestingABI.json');
 
+// Run npx hardhat test --network hardhat to test against mainnet
 describe("Purchase Executor Contract", function () {
-
     let PurchaseExecutor;
     let PurchaseExecutorDeployed;
     let SarcoToken;
@@ -37,11 +37,11 @@ describe("Purchase Executor Contract", function () {
             }]
         })
 
-        // Impersonate Sarco + USDC holders
+        // Impersonate Sarco holder + USDC holders
         await hre.network.provider.request({
             method: "hardhat_impersonateAccount",
             params: ["0x244265a76901b8030b140a2996e6dd4703cbf20f"]
-        } //sarco holder
+        } //SarcoToken holder
         );
 
         await hre.network.provider.request({
@@ -62,9 +62,6 @@ describe("Purchase Executor Contract", function () {
         } //USDCTokenHolder3 holder
         );
 
-        // Get the ContractFactory
-        PurchaseExecutor = await ethers.getContractFactory("PurchaseExecutor");
-
         // Get Signers
         [owner, SarcoDao] = await ethers.getSigners();
         SarcoTokenHolder = await ethers.provider.getSigner("0x244265a76901b8030b140a2996e6dd4703cbf20f");
@@ -72,22 +69,22 @@ describe("Purchase Executor Contract", function () {
         USDCTokenHolder2 = await ethers.provider.getSigner("0xf9706224f8b7275ee159866c35f26e1f43682e20");
         USDCTokenHolder3 = await ethers.provider.getSigner("0x530e0a6993ea99ffc96615af43f327225a5fe536");
 
-        // Set vars
+        // Set Addresses
         SarcoToken = "0x7697b462a7c4ff5f8b55bdbc2f4076c2af9cf51a";
         USDCToken = "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48";
         GeneralTokenVesting = "0x8727c592F28F10b42eB0914a7f6a5885823794c0";
         ZERO_ADDRESS = "0x0000000000000000000000000000000000000000";
+
+        // Set Contract Instances
         SarcoTokenContract = new ethers.Contract(SarcoToken, Sarcoabi, signer);
         USDCTokenContract = new ethers.Contract(USDCToken, USDCabi, signer);
         GeneralTokenVestingContract = new ethers.Contract(GeneralTokenVesting, GeneralVestingabi, signer);
-    });
 
-    // You can nest describe calls to create subsections.
-    // Run npx hardhat test --network hardhat to test against mainnet
+        // Get the ContractFactory
+        PurchaseExecutor = await ethers.getContractFactory("PurchaseExecutor");
+        });
+
     describe("Deployment", function () {
-        // `it` is another Mocha function. This is the one you use to define your
-        // tests. It receives the test name, and a callback function.
-
         it("Should set constants", async function () {
             PurchaseExecutorDeployed = await PurchaseExecutor.deploy(
                 1, // usdc_to_sarco_rate
@@ -102,10 +99,6 @@ describe("Purchase Executor Contract", function () {
                 SarcoDao.address
             );
             expect(await PurchaseExecutorDeployed.USDC_TO_SARCO_RATE_PRECISION()).to.equal("1000000000000000000");
-            // Checksum Addresses giving me trouble
-            // expect(await PurchaseExecutorDeployed.USDC_TOKEN()).to.hexEqual(USDCToken);
-            // expect(await PurchaseExecutorDeployed.SARCO_TOKEN()).to.equal(SarcoToken);
-            // expect(await PurchaseExecutorDeployed.GENERAL_VESTING_CONTRACT()).to.equal(GeneralTokenVesting);
             expect(await PurchaseExecutorDeployed.usdc_to_sarco_rate()).to.equal(1);
             expect(await PurchaseExecutorDeployed.sarco_allocations_total()).to.equal('360000000000000000000');
             expect(await PurchaseExecutorDeployed.sarco_allocations(USDCTokenHolder1._address)).to.equal('110000000000000000000');
@@ -296,7 +289,6 @@ describe("Purchase Executor Contract", function () {
         });
     });
 
-    // Todo: should check the offer started at / expire time
     describe("start", function () {
         beforeEach(async function () {
             PurchaseExecutorDeployed = await PurchaseExecutor.deploy(
@@ -539,4 +531,6 @@ describe("Purchase Executor Contract", function () {
                 .to.equal(0);
         });
     });
+
+    // TODO create integration test - testing components working together
 });
