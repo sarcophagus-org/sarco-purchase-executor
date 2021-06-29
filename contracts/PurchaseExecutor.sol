@@ -153,8 +153,8 @@ contract PurchaseExecutor {
         returns (uint256, uint256)
     {
         uint256 sarco_allocation = sarco_allocations[_sarco_receiver];
-        uint256 usdc_cost = (sarco_allocation /
-            usdc_to_sarco_rate) / 10 ** (18-6);
+        uint256 usdc_cost = (sarco_allocation / usdc_to_sarco_rate) /
+            10**(18 - 6);
         return (sarco_allocation, usdc_cost);
     }
 
@@ -170,7 +170,10 @@ contract PurchaseExecutor {
      * @notice Starts the offer if it 1) hasn't been started yet and 2) has received funding in full.
      */
     function _start_unless_started() internal {
-        require(offer_started_at == 0, "PurchaseExecutor: Offer has already started");
+        require(
+            offer_started_at == 0,
+            "PurchaseExecutor: Offer has already started"
+        );
         require(
             SARCO_TOKEN.balanceOf(address(this)) == sarco_allocations_total,
             "PurchaseExecutor: not funded with Sarco Tokens"
@@ -178,7 +181,7 @@ contract PurchaseExecutor {
 
         offer_started_at = block.timestamp;
         offer_expires_at = block.timestamp + offer_expiration_delay;
-        emit OfferStarted(offer_started_at, offer_expires_at);  
+        emit OfferStarted(offer_started_at, offer_expires_at);
     }
 
     function start() external {
@@ -194,7 +197,6 @@ contract PurchaseExecutor {
         return _get_allocation(msg.sender);
     }
 
-    //Todo sarcp allocation should be multiplied 
     function _execute_purchase(address _sarco_receiver) internal {
         if (offer_started_at == 0) {
             _start_unless_started();
@@ -256,9 +258,11 @@ contract PurchaseExecutor {
         );
 
         uint256 unsold_sarco_amount = SARCO_TOKEN.balanceOf(address(this));
-        require(unsold_sarco_amount > 0, "PurchaseExecutor: There are no tokens to recover");
+        require(
+            unsold_sarco_amount > 0,
+            "PurchaseExecutor: There are no tokens to recover"
+        );
         SARCO_TOKEN.safeTransfer(SARCO_DAO, unsold_sarco_amount);
         emit TokensRecovered(unsold_sarco_amount);
-        
     }
 }
