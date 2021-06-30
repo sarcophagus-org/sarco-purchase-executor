@@ -24,6 +24,6 @@ module.exports = async ({
         "0xAE9B102741a1B60C221e39CD9526Ab38c9865AB3"
       ],
     });
-
+    
     console.log(PurchaseExecutorDeployed.address);
   };

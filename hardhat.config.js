@@ -1,7 +1,8 @@
 require("@nomiclabs/hardhat-waffle");
 require("@nomiclabs/hardhat-ethers");
 require('hardhat-deploy');
-require('dotenv').config()
+require('dotenv').config();
+require("@nomiclabs/hardhat-etherscan");
 
 
 module.exports = {
@@ -15,6 +16,26 @@ module.exports = {
       forking: {
         url: process.env.MAINNET_PROVIDER,
       }
-    }
+    },
+    mainnet: {
+      chainId: 1,
+      url: process.env.MAINNET_PROVIDER,
+      accounts: [process.env.MAINNET_PK || ""],
+    },
+    ropsten: {
+      chainId: 3,
+      url: process.env.ROPSTEN_PROVIDER,
+      accounts: [process.env.ROPSTEN_PK || ""],
+    },
+    rinkeby: {
+      chainId: 4,
+      url: process.env.RINKEBY_PROVIDER,
+      accounts: [process.env.RINKEBY_PK || ""],
+    },
+  },
+  etherscan: {
+    // Your API key for Etherscan
+    // Obtain one at https://etherscan.io/
+    apiKey: "3VVGSMKI4DDACFDAGG8JPCHH97IH8W6TI9"
   }
 };
