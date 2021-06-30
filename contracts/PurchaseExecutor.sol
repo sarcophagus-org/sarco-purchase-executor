@@ -193,8 +193,12 @@ contract PurchaseExecutor {
         the purchase was already executed for that address), the second element is the
         USDC cost of the purchase.
      */
-    function get_allocation() external view returns (uint256, uint256) {
-        return _get_allocation(msg.sender);
+    function get_allocation(address _sarco_receiver)
+        external
+        view
+        returns (uint256, uint256)
+    {
+        return _get_allocation(_sarco_receiver);
     }
 
     function _execute_purchase(address _sarco_receiver) internal {
@@ -220,7 +224,7 @@ contract PurchaseExecutor {
         sarco_allocations[_sarco_receiver] = 0;
 
         // forward USDC cost of the purchase to the DAO contract
-        USDC_TOKEN.safeTransferFrom(_sarco_receiver, SARCO_DAO, usdc_cost);
+        USDC_TOKEN.safeTransferFrom(msg.sender, SARCO_DAO, usdc_cost);
 
         //approve tokens to general vesting contract...
         // will need to just approve and call deposit
@@ -240,8 +244,8 @@ contract PurchaseExecutor {
     /**
      * @dev Purchases Sarco for the specified address (defaults to message sender) in exchange for USDC.
      */
-    function execute_purchase() external {
-        _execute_purchase(msg.sender);
+    function execute_purchase(address _sarco_receiver) external {
+        _execute_purchase(_sarco_receiver);
     }
 
     /**
