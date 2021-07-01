@@ -1,20 +1,17 @@
 module.exports = async ({
     getNamedAccounts,
     deployments,
-    getChainId,
-    getUnnamedAccounts,
   }) => {
     const {deploy} = deployments;
     const {deployer} = await getNamedAccounts();
   
-    // the following will only deploy "GenericMetaTxProcessor" if the contract was never deployed or if the code changed since last deployment
     PurchaseExecutorDeployed = await deploy('PurchaseExecutor', {
       from: deployer,
       gasLimit: 4000000,
       args: [
         1, // usdc_to_sarco_rate
         100, // vesting duration
-        1000,// offer experation delay
+        1000,// offer expiration delay
         ["0xaf6c936a0a48b8ffbf8c4725cc2d44af126904aa", "0xb1a5baace5444e7793035cbe9d58b4597655bfe3", "0x6d21266dfcf5541bee9f67c4837aaa72b3bf9303"],
         [110, 120, 130],
         360,
