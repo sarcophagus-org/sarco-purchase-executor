@@ -29,7 +29,8 @@ describe("Purchase Executor Contract", function () {
             method: "hardhat_reset",
             params: [{
                 forking: {
-                    jsonRpcUrl: process.env.MAINNET_PROVIDER
+                    jsonRpcUrl: process.env.MAINNET_PROVIDER,
+                    blockNumber: 12778138,
                 }
             }]
         })
