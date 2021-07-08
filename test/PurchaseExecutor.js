@@ -91,7 +91,7 @@ describe("Purchase Executor Contract", function () {
     describe("Deployment", function () {
         it("Should set constants", async function () {
             PurchaseExecutorDeployed = await PurchaseExecutor.deploy(
-                1, // usdc_to_sarco_rate
+                "1000000000000000000", // usdc_to_sarco_rate
                 100, // vesting duration
                 1000,// offer expiration delay
                 [USDCTokenHolder1._address, USDCTokenHolder2._address, USDCTokenHolder3._address],
@@ -102,7 +102,9 @@ describe("Purchase Executor Contract", function () {
                 GeneralTokenVesting,
                 SarcoDao.address
             );
-            expect(await PurchaseExecutorDeployed.usdc_to_sarco_rate()).to.equal(1);
+                "1000000000000000000", // usdc_to_sarco_rate
+                "1000000000000000000", // usdc_to_sarco_rate
+            expect(await PurchaseExecutorDeployed.usdc_to_sarco_rate()).to.equal('1000000000000000000');
             expect(await PurchaseExecutorDeployed.sarco_allocations_total()).to.equal('360000000000000000000');
             expect(await PurchaseExecutorDeployed.sarco_allocations(USDCTokenHolder1._address)).to.equal('110000000000000000000');
             expect(await PurchaseExecutorDeployed.sarco_allocations(USDCTokenHolder2._address)).to.equal('120000000000000000000');
@@ -128,7 +130,7 @@ describe("Purchase Executor Contract", function () {
 
         it("Should revert if vesting_end_delay is 0", async function () {
             await expect(PurchaseExecutor.deploy(
-                1, // usdc_to_sarco_rate
+                "1000000000000000000", // usdc_to_sarco_rate
                 0, // vesting duration
                 1000,// offer expiration delay
                 [USDCTokenHolder1._address, USDCTokenHolder2._address, USDCTokenHolder3._address],
@@ -143,7 +145,7 @@ describe("Purchase Executor Contract", function () {
 
         it("Should revert if offer_expiration_delay is 0", async function () {
             await expect(PurchaseExecutor.deploy(
-                1, // usdc_to_sarco_rate
+                "1000000000000000000", // usdc_to_sarco_rate
                 100, // vesting duration
                 0,// offer expiration delay
                 [USDCTokenHolder1._address, USDCTokenHolder2._address, USDCTokenHolder3._address],
@@ -158,7 +160,7 @@ describe("Purchase Executor Contract", function () {
 
         it("Should revert if the length of purchaser array does not equal allocations array", async function () {
             await expect(PurchaseExecutor.deploy(
-                1, // usdc_to_sarco_rate
+                "1000000000000000000", // usdc_to_sarco_rate
                 100, // vesting duration
                 1000,// offer expiration delay
                 [USDCTokenHolder1._address, USDCTokenHolder2._address, USDCTokenHolder3._address],
@@ -173,7 +175,7 @@ describe("Purchase Executor Contract", function () {
 
         it("Should revert if the length of allocations array does not equal purchasers", async function () {
             await expect(PurchaseExecutor.deploy(
-                1, // usdc_to_sarco_rate
+                "1000000000000000000", // usdc_to_sarco_rate
                 100, // vesting duration
                 1000,// offer expiration delay
                 [USDCTokenHolder1._address, USDCTokenHolder2._address],
@@ -188,7 +190,7 @@ describe("Purchase Executor Contract", function () {
 
         it("Should revert if the USDCToken address is address(0)", async function () {
             await expect(PurchaseExecutor.deploy(
-                1, // usdc_to_sarco_rate
+                "1000000000000000000", // usdc_to_sarco_rate
                 100, // vesting duration
                 1000,// offer expiration delay
                 [USDCTokenHolder1._address, USDCTokenHolder2._address, USDCTokenHolder3._address],
@@ -203,7 +205,7 @@ describe("Purchase Executor Contract", function () {
 
         it("Should revert if the SarcoToken address is address(0)", async function () {
             await expect(PurchaseExecutor.deploy(
-                1, // usdc_to_sarco_rate
+                "1000000000000000000", // usdc_to_sarco_rate
                 100, // vesting duration
                 1000,// offer expiration delay
                 [USDCTokenHolder1._address, USDCTokenHolder2._address, USDCTokenHolder3._address],
@@ -218,7 +220,7 @@ describe("Purchase Executor Contract", function () {
 
         it("Should revert if the GeneralTokenVesting address is address(0)", async function () {
             await expect(PurchaseExecutor.deploy(
-                1, // usdc_to_sarco_rate
+                "1000000000000000000", // usdc_to_sarco_rate
                 100, // vesting duration
                 1000,// offer expiration delay
                 [USDCTokenHolder1._address, USDCTokenHolder2._address, USDCTokenHolder3._address],
@@ -233,7 +235,7 @@ describe("Purchase Executor Contract", function () {
 
         it("Should revert if the SarcoDAO address is address(0)", async function () {
             await expect(PurchaseExecutor.deploy(
-                1, // usdc_to_sarco_rate
+                "1000000000000000000", // usdc_to_sarco_rate
                 100, // vesting duration
                 1000,// offer expiration delay
                 [USDCTokenHolder1._address, USDCTokenHolder2._address, USDCTokenHolder3._address],
@@ -248,7 +250,7 @@ describe("Purchase Executor Contract", function () {
 
         it("Should revert if a purchaser is zero address", async () => {
             await expect(PurchaseExecutor.deploy(
-                1, // usdc_to_sarco_rate
+                "1000000000000000000", // usdc_to_sarco_rate
                 100, // vesting duration
                 1000,// offer expiration delay
                 [ZERO_ADDRESS, USDCTokenHolder2._address, USDCTokenHolder3._address],
@@ -263,7 +265,7 @@ describe("Purchase Executor Contract", function () {
 
         it("Should revert if a purchaser allocation is zero", async () => {
             await expect(PurchaseExecutor.deploy(
-                1, // usdc_to_sarco_rate
+                "1000000000000000000", // usdc_to_sarco_rate
                 100, // vesting duration
                 1000,// offer expiration delay
                 [USDCTokenHolder1._address, USDCTokenHolder2._address, USDCTokenHolder3._address],
@@ -278,7 +280,7 @@ describe("Purchase Executor Contract", function () {
 
         it("Should revert if purchaser array includes a duplicate", async () => {
             await expect(PurchaseExecutor.deploy(
-                1, // usdc_to_sarco_rate
+                "1000000000000000000", // usdc_to_sarco_rate
                 100, // vesting duration
                 1000,// offer expiration delay
                 [USDCTokenHolder2._address, USDCTokenHolder2._address, USDCTokenHolder3._address],
@@ -293,7 +295,7 @@ describe("Purchase Executor Contract", function () {
 
         it("Should revert if _sarco_allocations_total does not equal sum of allocations array", async () => {
             await expect(PurchaseExecutor.deploy(
-                1, // usdc_to_sarco_rate
+                "1000000000000000000", // usdc_to_sarco_rate
                 100, // vesting duration
                 1000,// offer expiration delay
                 [USDCTokenHolder1._address, USDCTokenHolder2._address, USDCTokenHolder3._address],
@@ -310,7 +312,7 @@ describe("Purchase Executor Contract", function () {
     describe("Start", function () {
         beforeEach(async function () {
             PurchaseExecutorDeployed = await PurchaseExecutor.deploy(
-                1, // usdc_to_sarco_rate
+                "1000000000000000000", // usdc_to_sarco_rate
                 100, // vesting duration
                 1000,// offer expiration delay
                 [USDCTokenHolder1._address, USDCTokenHolder2._address, USDCTokenHolder3._address],
@@ -405,7 +407,7 @@ describe("Purchase Executor Contract", function () {
             expect(await PurchaseExecutorDeployed.offer_expired()).to.be.equal(true);
         });
 
-        it("should revert if start is called twice", async function () {
+        it("Should revert if start is called twice", async function () {
             // Transfer Sarco to PurchaseExecutor Contract
             await SarcoTokenContract.connect(SarcoTokenHolder).transfer(PurchaseExecutorDeployed.address, '360000000000000000000');
 
@@ -422,7 +424,7 @@ describe("Purchase Executor Contract", function () {
         beforeEach(async function () {
             // Deploy contract
             PurchaseExecutorDeployed = await PurchaseExecutor.deploy(
-                1, // usdc_to_sarco_rate
+                "1000000000000000000", // usdc_to_sarco_rate
                 100, // vesting duration
                 1000,// offer expiration delay
                 [USDCTokenHolder1._address, USDCTokenHolder2._address, USDCTokenHolder3._address],
@@ -590,16 +592,16 @@ describe("Purchase Executor Contract", function () {
         });
     });
 
-    describe("Verify usdc_to_sarco math", function () {
-        it("Should verify correct USDCCost - usdc_to_sarco_rate = 1", async function () {
+    describe("Verify usdc_to_sarco conversion rates", function () {
+        it("Should verify 1 Sarco costs $1", async function () {
             // Deploy Contract
             PurchaseExecutorDeployed = await PurchaseExecutor.deploy(
-                1, // usdc_to_sarco_rate
+                "1000000000000000000", // usdc_to_sarco_rate
                 100, // vesting duration
                 1000,// offer expiration delay
                 [USDCTokenHolder1._address, USDCTokenHolder2._address, USDCTokenHolder3._address],
-                ['110000000000000000000', '120000000000000000000', '130000000000000000000'],
-                '360000000000000000000',
+                ['1000000000000000000', '1000000000000000000', '1000000000000000000'],
+                '3000000000000000000',
                 USDCToken,
                 SarcoToken,
                 GeneralTokenVesting,
@@ -610,18 +612,18 @@ describe("Purchase Executor Contract", function () {
             let SarcoAllocation;
             let USDCCost;
             [SarcoAllocation, USDCCost] = await PurchaseExecutorDeployed.connect(USDCTokenHolder1).get_allocation(USDCTokenHolder1._address);
-            expect(USDCCost).to.equal('110000000');
+            expect(USDCCost).to.equal('1000000');
         });
 
-        it("Should verify correct USDCCost - usdc_to_sarco_rate = 2", async function () {
+        it("Should verify 1 Sarco costs 20 cents", async function () {
             // Deploy Contract
             PurchaseExecutorDeployed = await PurchaseExecutor.deploy(
-                2, // usdc_to_sarco_rate
+                "5000000000000000000", // usdc_to_sarco_rate
                 100, // vesting duration
                 1000,// offer expiration delay
                 [USDCTokenHolder1._address, USDCTokenHolder2._address, USDCTokenHolder3._address],
-                ['110000000000000000000', '120000000000000000000', '130000000000000000000'],
-                '360000000000000000000',
+                ['1000000000000000000', '1000000000000000000', '1000000000000000000'],
+                '3000000000000000000',
                 USDCToken,
                 SarcoToken,
                 GeneralTokenVesting,
@@ -632,18 +634,18 @@ describe("Purchase Executor Contract", function () {
             let SarcoAllocation;
             let USDCCost;
             [SarcoAllocation, USDCCost] = await PurchaseExecutorDeployed.connect(USDCTokenHolder1).get_allocation(USDCTokenHolder1._address);
-            expect(USDCCost).to.equal('55000000');
+            expect(USDCCost).to.equal('200000');
         });
 
-        it("Should verify correct USDCCost - usdc_to_sarco_rate = 3", async function () {
+        it("Should verify 1 Sarco costs 25 cents", async function () {
             // Deploy Contract
             PurchaseExecutorDeployed = await PurchaseExecutor.deploy(
-                3, // usdc_to_sarco_rate
+                '4000000000000000000', // usdc_to_sarco_rate
                 100, // vesting duration
                 1000,// offer expiration delay
                 [USDCTokenHolder1._address, USDCTokenHolder2._address, USDCTokenHolder3._address],
-                ['110000000000000000000', '120000000000000000000', '130000000000000000000'],
-                '360000000000000000000',
+                ['1000000000000000000', '1000000000000000000', '1000000000000000000'],
+                '3000000000000000000',
                 USDCToken,
                 SarcoToken,
                 GeneralTokenVesting,
@@ -654,7 +656,95 @@ describe("Purchase Executor Contract", function () {
             let SarcoAllocation;
             let USDCCost;
             [SarcoAllocation, USDCCost] = await PurchaseExecutorDeployed.connect(USDCTokenHolder1).get_allocation(USDCTokenHolder1._address);
-            expect(USDCCost).to.equal('36666666');
+            expect(USDCCost).to.equal('250000');
+        });
+
+        it("Should verify 1 Sarco costs 66 cents", async function () {
+            // Deploy Contract
+            PurchaseExecutorDeployed = await PurchaseExecutor.deploy(
+                '1515150000000000000', // usdc_to_sarco_rate
+                100, // vesting duration
+                1000,// offer expiration delay
+                [USDCTokenHolder1._address, USDCTokenHolder2._address, USDCTokenHolder3._address],
+                ['1000000000000000000', '1000000000000000000', '1000000000000000000'],
+                '3000000000000000000',
+                USDCToken,
+                SarcoToken,
+                GeneralTokenVesting,
+                SarcoDao.address
+            );
+            
+            // Return USDCCost to purchase Sarco
+            let SarcoAllocation;
+            let USDCCost;
+            [SarcoAllocation, USDCCost] = await PurchaseExecutorDeployed.connect(USDCTokenHolder1).get_allocation(USDCTokenHolder1._address);
+            expect(USDCCost).to.equal('660000');
+        });
+
+        it("Should verify 1 Sarco costs 92 cents", async function () {
+            // Deploy Contract
+            PurchaseExecutorDeployed = await PurchaseExecutor.deploy(
+                '1086956000000000000', // usdc_to_sarco_rate
+                100, // vesting duration
+                1000,// offer expiration delay
+                [USDCTokenHolder1._address, USDCTokenHolder2._address, USDCTokenHolder3._address],
+                ['1000000000000000000', '1000000000000000000', '1000000000000000000'],
+                '3000000000000000000',
+                USDCToken,
+                SarcoToken,
+                GeneralTokenVesting,
+                SarcoDao.address
+            );
+            
+            // Return USDCCost to purchase Sarco
+            let SarcoAllocation;
+            let USDCCost;
+            [SarcoAllocation, USDCCost] = await PurchaseExecutorDeployed.connect(USDCTokenHolder1).get_allocation(USDCTokenHolder1._address);
+            expect(USDCCost).to.equal('920000');
+        });
+
+        it("Should verify 1 Sarco costs $1.50", async function () {
+            // Deploy Contract
+            PurchaseExecutorDeployed = await PurchaseExecutor.deploy(
+                '666666500000000000', // usdc_to_sarco_rate
+                100, // vesting duration
+                1000,// offer expiration delay
+                [USDCTokenHolder1._address, USDCTokenHolder2._address, USDCTokenHolder3._address],
+                ['1000000000000000000', '1000000000000000000', '1000000000000000000'],
+                '3000000000000000000',
+                USDCToken,
+                SarcoToken,
+                GeneralTokenVesting,
+                SarcoDao.address
+            );
+            
+            // Return USDCCost to purchase Sarco
+            let SarcoAllocation;
+            let USDCCost;
+            [SarcoAllocation, USDCCost] = await PurchaseExecutorDeployed.connect(USDCTokenHolder1).get_allocation(USDCTokenHolder1._address);
+            expect(USDCCost).to.equal('1500000');
+        });
+
+        it("Should verify 1 Sarco costs $4.22", async function () {
+            // Deploy Contract
+            PurchaseExecutorDeployed = await PurchaseExecutor.deploy(
+                '238095200000000000', // usdc_to_sarco_rate
+                100, // vesting duration
+                1000,// offer expiration delay
+                [USDCTokenHolder1._address, USDCTokenHolder2._address, USDCTokenHolder3._address],
+                ['1000000000000000000', '1000000000000000000', '1000000000000000000'],
+                '3000000000000000000',
+                USDCToken,
+                SarcoToken,
+                GeneralTokenVesting,
+                SarcoDao.address
+            );
+            
+            // Return USDCCost to purchase Sarco
+            let SarcoAllocation;
+            let USDCCost;
+            [SarcoAllocation, USDCCost] = await PurchaseExecutorDeployed.connect(USDCTokenHolder1).get_allocation(USDCTokenHolder1._address);
+            expect(USDCCost).to.equal('4200000');
         });
     });
 
@@ -662,7 +752,7 @@ describe("Purchase Executor Contract", function () {
         beforeEach(async function () {
             // Deploy Contract
             PurchaseExecutorDeployed = await PurchaseExecutor.deploy(
-                1, // usdc_to_sarco_rate
+                "1000000000000000000", // usdc_to_sarco_rate
                 100, // vesting duration
                 1000,// offer expiration delay
                 [USDCTokenHolder1._address, USDCTokenHolder2._address, USDCTokenHolder3._address],
@@ -767,7 +857,7 @@ describe("Purchase Executor Contract", function () {
         it("Should Deploy - Start - Execute Purchase - Recover Funds", async function () {
             // Deployed
             PurchaseExecutorDeployed = await PurchaseExecutor.deploy(
-                1, // usdc_to_sarco_rate
+                "1000000000000000000", // usdc_to_sarco_rate
                 100, // vesting duration
                 1000,// offer expiration delay
                 [USDCTokenHolder1._address, USDCTokenHolder2._address, USDCTokenHolder3._address],
@@ -806,7 +896,7 @@ describe("Purchase Executor Contract", function () {
         it("Should Deploy - Start - Execute (3)Purchase - Revert Recover Funds", async function () {
             // Deployed
             PurchaseExecutorDeployed = await PurchaseExecutor.deploy(
-                1, // usdc_to_sarco_rate
+                "1000000000000000000", // usdc_to_sarco_rate
                 100, // vesting duration
                 1000,// offer expiration delay
                 [USDCTokenHolder1._address, USDCTokenHolder2._address, USDCTokenHolder3._address],
@@ -854,7 +944,7 @@ describe("Purchase Executor Contract", function () {
         it("Should Deploy - Start - Execute (3)Purchase - Verify GeneralVesting/Purchase Executor state", async function () {
             // Deployed
             PurchaseExecutorDeployed = await PurchaseExecutor.deploy(
-                1, // usdc_to_sarco_rate
+                "1000000000000000000", // usdc_to_sarco_rate
                 100, // vesting duration
                 1000,// offer expiration delay
                 [USDCTokenHolder1._address, USDCTokenHolder2._address, USDCTokenHolder3._address],

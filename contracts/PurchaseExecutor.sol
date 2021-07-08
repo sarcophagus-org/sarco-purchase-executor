@@ -14,6 +14,8 @@ contract PurchaseExecutor {
     IERC20 public SARCO_TOKEN;
     address public GENERAL_TOKEN_VESTING;
     address public SARCO_DAO;
+    uint256 public usdc_to_sarco_precision = 10**18;
+    uint256 public sarco_to_usdc_decimal_fix = 10**(18 - 6);
 
     // How much SARCO in one USDC, USDC_TO_SARCO_RATE_PERCISION being 1
     uint256 public usdc_to_sarco_rate;
@@ -187,8 +189,9 @@ contract PurchaseExecutor {
         returns (uint256, uint256)
     {
         uint256 sarco_allocation = sarco_allocations[_sarco_receiver];
-        uint256 usdc_cost = (sarco_allocation / usdc_to_sarco_rate) /
-            10**(18 - 6);
+        uint256 usdc_cost = ((sarco_allocation * usdc_to_sarco_precision) /
+            usdc_to_sarco_rate) / sarco_to_usdc_decimal_fix;
+
         return (sarco_allocation, usdc_cost);
     }
 
