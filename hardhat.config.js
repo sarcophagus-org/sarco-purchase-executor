@@ -15,6 +15,7 @@ module.exports = {
     hardhat: {
       forking: {
         url: process.env.MAINNET_PROVIDER,
+        blockNumber: 12778138,
       }
     },
     mainnet: {
