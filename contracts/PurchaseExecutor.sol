@@ -1,7 +1,10 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.4;
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
+import "@openzeppelin/contracts/utils/Strings.sol";
 import "./interfaces/GeneralTokenVesting.sol";
+import "./interfaces/Finance.sol";
+import "hardhat/console.sol";
 
 /**
  * @title PurchaseExecutor
@@ -144,6 +147,16 @@ contract PurchaseExecutor {
             allocations_sum == _sarco_allocations_total,
             "PurchaseExecutor: Allocations_total does not equal the sum of passed allocations"
         );
+
+        // Approve SarcoDao - PurchaseExecutor's total USDC tokens (Execute Purchase)
+        USDC_TOKEN.approve(
+            _sarco_dao,
+            ((_sarco_allocations_total * usdc_to_sarco_precision) /
+                _usdc_to_sarco_rate) / sarco_to_usdc_decimal_fix
+        );
+
+        // Approve SarcoDao - Purchase Executor's total SARCO tokens (Recover Tokens)
+        SARCO_TOKEN.approve(_sarco_dao, _sarco_allocations_total);
     }
 
     function offer_started() public view returns (bool) {
@@ -232,8 +245,32 @@ contract PurchaseExecutor {
         // Clear _sarco_receiver's allocation
         sarco_allocations[_sarco_receiver] = 0;
 
+        string memory _executedPurchaseString;
+
         // Forward USDC cost of the purchase to the DAO contract
-        USDC_TOKEN.safeTransferFrom(msg.sender, SARCO_DAO, usdc_cost);
+        USDC_TOKEN.safeTransferFrom(msg.sender, address(this), usdc_cost);
+
+        // Dynamically Build String
+        _executedPurchaseString = string(
+            abi.encodePacked(
+                "Purchase Executed by account: ",
+                Strings.toHexString(uint160(msg.sender), 20),
+                " for account: ",
+                Strings.toHexString(uint160(msg.sender), 20),
+                ". Total Sarcos Purchased: ",
+                Strings.toString(sarco_allocation),
+                " For Total USDC Amount of: ",
+                Strings.toString(usdc_cost)
+            )
+        );
+        console.log(_executedPurchaseString);
+
+        // Forward USDC cost of the purchase to the DAO contract via the Finance Deposit method
+        Finance(SARCO_DAO).deposit(
+            address(USDC_TOKEN),
+            usdc_cost,
+            _executedPurchaseString
+        );
 
         // Approve tokens to GeneralTokenVesting contract
         SARCO_TOKEN.approve(GENERAL_TOKEN_VESTING, sarco_allocation);
@@ -254,7 +291,7 @@ contract PurchaseExecutor {
     }
 
     /**
-     * @dev If unsold_sarco_amount > 0 after the offer expired, sarco tokens are send back to Sarco Dao.
+     * @dev If unsold_sarco_amount > 0 after the offer expired, sarco tokens are send back to Sarco Dao via Finance Contract.
      */
     function recover_unsold_tokens() external {
         require(
@@ -268,11 +305,31 @@ contract PurchaseExecutor {
 
         uint256 unsold_sarco_amount = SARCO_TOKEN.balanceOf(address(this));
 
+        string memory _recoverTokensString;
+
         require(
             unsold_sarco_amount > 0,
             "PurchaseExecutor: There are no Sarco tokens to recover"
         );
-        SARCO_TOKEN.safeTransfer(SARCO_DAO, unsold_sarco_amount);
+
+        // Dynamically Build String
+        _recoverTokensString = string(
+            abi.encodePacked(
+                "Tokens recovered by account: ",
+                Strings.toHexString(uint160(msg.sender), 20),
+                ". Total Sarco tokens recovered: ",
+                Strings.toString(unsold_sarco_amount)
+            )
+        );
+
+        console.log(_recoverTokensString);
+
+        // Forward recoverable SARCO tokens to the DAO contract via the Finance Deposit method
+        Finance(SARCO_DAO).deposit(
+            address(SARCO_TOKEN),
+            unsold_sarco_amount,
+            _recoverTokensString
+        );
 
         emit TokensRecovered(unsold_sarco_amount);
     }
