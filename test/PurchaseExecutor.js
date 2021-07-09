@@ -20,7 +20,6 @@ describe("Purchase Executor Contract", function () {
     let owner;
     let SarcoDao;
     let SarcoVault;
-    let ZERO_ADDRESS;
     const provider = ethers.getDefaultProvider();
     const signer = ethers.Wallet.createRandom().connect(provider);
 
@@ -80,7 +79,6 @@ describe("Purchase Executor Contract", function () {
         SarcoVault = "0x2627e4c6beecbcb7ba0a5bb9861ec870dc86eb59";
         USDCToken = "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48";
         GeneralTokenVesting = "0x8727c592F28F10b42eB0914a7f6a5885823794c0";
-        ZERO_ADDRESS = "0x0000000000000000000000000000000000000000";
 
         // Set Contract Instances
         SarcoTokenContract = new ethers.Contract(SarcoToken, Sarcoabi, signer);
@@ -105,9 +103,8 @@ describe("Purchase Executor Contract", function () {
                 GeneralTokenVesting,
                 SarcoDao
             );
-            "1000000000000000000", // usdc_to_sarco_rate
-                "1000000000000000000", // usdc_to_sarco_rate
-                expect(await PurchaseExecutorDeployed.usdc_to_sarco_rate()).to.equal('1000000000000000000');
+            console.log(ethers.constants.AddressZero);
+            expect(await PurchaseExecutorDeployed.usdc_to_sarco_rate()).to.equal('1000000000000000000');
             expect(await PurchaseExecutorDeployed.sarco_allocations_total()).to.equal('360000000000000000000');
             expect(await PurchaseExecutorDeployed.sarco_allocations(USDCTokenHolder1._address)).to.equal('110000000000000000000');
             expect(await PurchaseExecutorDeployed.sarco_allocations(USDCTokenHolder2._address)).to.equal('120000000000000000000');
@@ -191,7 +188,7 @@ describe("Purchase Executor Contract", function () {
                 .to.be.revertedWith("PurchaseExecutor: purchasers and allocations lengths must be equal");
         });
 
-        it("Should revert if the USDCToken address is address(0)", async function () {
+        it.only("Should revert if the USDCToken address is address(0)", async function () {
             await expect(PurchaseExecutor.deploy(
                 "1000000000000000000", // usdc_to_sarco_rate
                 100, // vesting duration
@@ -199,14 +196,14 @@ describe("Purchase Executor Contract", function () {
                 [USDCTokenHolder1._address, USDCTokenHolder2._address, USDCTokenHolder3._address],
                 ['110000000000000000000', '120000000000000000000', '130000000000000000000'],
                 '360000000000000000000',
-                ZERO_ADDRESS,
+                ethers.constants.AddressZero,
                 SarcoToken,
                 GeneralTokenVesting,
                 SarcoDao))
                 .to.be.revertedWith("PurchaseExecutor: _usdc_token cannot be 0 address");
         });
 
-        it("Should revert if the SarcoToken address is address(0)", async function () {
+        it.only("Should revert if the SarcoToken address is address(0)", async function () {
             await expect(PurchaseExecutor.deploy(
                 "1000000000000000000", // usdc_to_sarco_rate
                 100, // vesting duration
@@ -215,13 +212,13 @@ describe("Purchase Executor Contract", function () {
                 ['110000000000000000000', '120000000000000000000', '130000000000000000000'],
                 '360000000000000000000',
                 USDCToken,
-                ZERO_ADDRESS,
+                ethers.constants.AddressZero,
                 GeneralTokenVesting,
                 SarcoDao))
                 .to.be.revertedWith("PurchaseExecutor: _sarco_token cannot be 0 address");
         });
 
-        it("Should revert if the GeneralTokenVesting address is address(0)", async function () {
+        it.only("Should revert if the GeneralTokenVesting address is address(0)", async function () {
             await expect(PurchaseExecutor.deploy(
                 "1000000000000000000", // usdc_to_sarco_rate
                 100, // vesting duration
@@ -231,12 +228,12 @@ describe("Purchase Executor Contract", function () {
                 '360000000000000000000',
                 USDCToken,
                 SarcoToken,
-                ZERO_ADDRESS,
+                ethers.constants.AddressZero,
                 SarcoDao))
                 .to.be.revertedWith("PurchaseExecutor: _general_token_vesting cannot be 0 address");
         });
 
-        it("Should revert if the SarcoDao is address(0)", async function () {
+        it.only("Should revert if the SarcoDao is address(0)", async function () {
             await expect(PurchaseExecutor.deploy(
                 "1000000000000000000", // usdc_to_sarco_rate
                 100, // vesting duration
@@ -247,16 +244,16 @@ describe("Purchase Executor Contract", function () {
                 USDCToken,
                 SarcoToken,
                 GeneralTokenVesting,
-                ZERO_ADDRESS))
+                ethers.constants.AddressZero))
                 .to.be.revertedWith("PurchaseExecutor: _sarco_dao cannot be 0 address");
         });
 
-        it("Should revert if a purchaser is zero address", async () => {
+        it.only("Should revert if a purchaser is zero address", async () => {
             await expect(PurchaseExecutor.deploy(
                 "1000000000000000000", // usdc_to_sarco_rate
                 100, // vesting duration
                 1000,// offer expiration delay
-                [ZERO_ADDRESS, USDCTokenHolder2._address, USDCTokenHolder3._address],
+                [ethers.constants.AddressZero, USDCTokenHolder2._address, USDCTokenHolder3._address],
                 ['110000000000000000000', '120000000000000000000', '130000000000000000000'],
                 '360000000000000000000',
                 USDCToken,
@@ -500,7 +497,7 @@ describe("Purchase Executor Contract", function () {
                 .to.be.revertedWith("ERC20: transfer amount exceeds allowance");
         });
 
-        it.only("Should emit PurchaseExecuted event", async function () {
+        it("Should emit PurchaseExecuted event", async function () {
             // Return USDCCost to purchase Sarco 
             let SarcoAllocation;
             let USDCCost;
@@ -861,7 +858,7 @@ describe("Purchase Executor Contract", function () {
                 .to.be.revertedWith("PurchaseExecutor: There are no Sarco tokens to recover");
         });
 
-        it.only("Should emit TokensRecovered event", async function () {
+        it("Should emit TokensRecovered event", async function () {
             // Transfer Sarco to PurchaseExecutor Contract
             await SarcoTokenContract.connect(SarcoTokenHolder).transfer(PurchaseExecutorDeployed.address, '360000000000000000000');
 
