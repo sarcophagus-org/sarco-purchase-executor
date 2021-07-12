@@ -195,8 +195,8 @@ contract PurchaseExecutor {
         the purchase was already executed for that address), the second element is the
         USDC cost of the purchase.
      */
-    function _get_allocation(address _sarco_receiver)
-        internal
+    function get_allocation(address _sarco_receiver)
+        public
         view
         returns (uint256, uint256)
     {
@@ -205,14 +205,6 @@ contract PurchaseExecutor {
             usdc_to_sarco_rate) / sarco_to_usdc_decimal_fix;
 
         return (sarco_allocation, usdc_cost);
-    }
-
-    function get_allocation(address _sarco_receiver)
-        external
-        view
-        returns (uint256, uint256)
-    {
-        return _get_allocation(_sarco_receiver);
     }
 
     /**
@@ -231,7 +223,7 @@ contract PurchaseExecutor {
             "PurchaseExecutor: Purchases cannot be made after the offer has expired"
         );
 
-        (uint256 sarco_allocation, uint256 usdc_cost) = _get_allocation(
+        (uint256 sarco_allocation, uint256 usdc_cost) = get_allocation(
             _sarco_receiver
         );
 
