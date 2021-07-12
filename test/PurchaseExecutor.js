@@ -449,9 +449,9 @@ describe("Purchase Executor Contract", function () {
                 ethers.utils.parseUnits("1.0", 18), // usdc_to_sarco_rate
                 100, // vesting duration
                 1000,// offer expiration delay
-                [USDCTokenHolder1._address, USDCTokenHolder2._address, USDCTokenHolder3._address],
-                [ethers.utils.parseUnits("110.0", 18), ethers.utils.parseUnits("120.0", 18), ethers.utils.parseUnits("130.0", 18)],
-                ethers.utils.parseUnits("360.0", 18),
+                [USDCTokenHolder1._address, USDCTokenHolder2._address],
+                [ethers.utils.parseUnits("110.0", 18), ethers.utils.parseUnits("120.0", 18)],
+                ethers.utils.parseUnits("230.0", 18),
                 USDCToken,
                 SarcoToken,
                 GeneralTokenVesting,
@@ -459,7 +459,7 @@ describe("Purchase Executor Contract", function () {
             );
 
             // Transfer Sarco to PurchaseExecutor Contract
-            await SarcoTokenContract.connect(SarcoTokenHolder).transfer(PurchaseExecutorDeployed.address, ethers.utils.parseUnits("360.0", 18));
+            await SarcoTokenContract.connect(SarcoTokenHolder).transfer(PurchaseExecutorDeployed.address, ethers.utils.parseUnits("230.0", 18));
 
             // Start Offer
             await PurchaseExecutorDeployed.start();
@@ -506,10 +506,10 @@ describe("Purchase Executor Contract", function () {
             [SarcoAllocation, USDCCost] = await PurchaseExecutorDeployed.get_allocation(USDCTokenHolder1._address);
 
             // Approve PurchaseExecutor Contract the USDCCost amount
-            await USDCTokenContract.connect(USDCTokenHolder1).approve(PurchaseExecutorDeployed.address, USDCCost);
+            await USDCTokenContract.connect(USDCTokenHolder3).approve(PurchaseExecutorDeployed.address, USDCCost);
 
             // Execute Purchase onBehalf of a whitelisted Purchaser
-            await expect(PurchaseExecutorDeployed.connect(stranger).execute_purchase(USDCTokenHolder1._address))
+            await expect(PurchaseExecutorDeployed.connect(USDCTokenHolder3).execute_purchase(USDCTokenHolder1._address))
                 .to.be.revertedWith("PurchaseExecutor: sender does not have a SARCO allocation");
         });
 
