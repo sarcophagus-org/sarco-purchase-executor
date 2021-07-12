@@ -634,7 +634,7 @@ describe("Purchase Executor Contract", function () {
     });
 
     describe("Verify usdc_to_sarco conversion rates", function () {
-        const deployAndGetCost = async (recipients, numbersOfSarco, usdcPricePerSarco) => {
+        const deployAndGetCost = async (numberOfSarco, usdcPricePerSarco) => {
             const rate = calculateUsdcSarcoRate(usdcPricePerSarco)
             
             // Deploy Contract
@@ -642,9 +642,9 @@ describe("Purchase Executor Contract", function () {
                 rate, // usdc_to_sarco_rate
                 100, // vesting duration
                 1000,// offer expiration delay
-                recipients,
-                numbersOfSarco,
-                numbersOfSarco.reduce((p, c) => p.add(c), ethers.BigNumber.from(0)),
+                [USDCTokenHolder1._address],
+                [numberOfSarco],
+                numberOfSarco,
                 USDCToken,
                 SarcoToken,
                 GeneralTokenVesting,
@@ -793,9 +793,10 @@ describe("Purchase Executor Contract", function () {
         it("Should verify purchasing 1000 SARCO at a rate of $4.20 per SARCO costs $4200", async function () {
             const numberOfSarco = ethers.utils.parseUnits("1000", 18);
             const usdcPricePerSarco = ethers.utils.parseUnits("4.20", 6);
-            const calculatedCost = ethers.utils.parseUnits("4200", 6);
-            const cost = await deployAndGetCost([USDCTokenHolder1._address], [numberOfSarco], usdcPricePerSarco);
-            expect(cost).to.equal(calculatedCost);
+            const expectedCost = ethers.utils.parseUnits("4200", 6);
+            const contractCost = await deployAndGetCost(numberOfSarco, usdcPricePerSarco);
+
+            expect(contractCost).to.equal(expectedCost);
         });
     });
 
