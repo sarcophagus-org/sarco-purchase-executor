@@ -658,136 +658,58 @@ describe("Purchase Executor Contract", function () {
             return USDCCost;
         }
 
-        it("Should verify 1 Sarco costs $1", async function () {
-            // Deploy Contract
-            PurchaseExecutorDeployed = await PurchaseExecutor.deploy(
-                ethers.utils.parseUnits("1.0", 18), // usdc_to_sarco_rate
-                100, // vesting duration
-                1000,// offer expiration delay
-                [USDCTokenHolder1._address, USDCTokenHolder2._address, USDCTokenHolder3._address],
-                [ethers.utils.parseUnits("1.0", 18), ethers.utils.parseUnits("1.0", 18), ethers.utils.parseUnits("1.0", 18)],
-                ethers.utils.parseUnits("3.0", 18),
-                USDCToken,
-                SarcoToken,
-                GeneralTokenVesting,
-                SarcoDao
-            );
+        it("Should verify purchasing 12,345 SARCO at a rate of $1 per SARCO costs $12,345", async function () {
+            const numberOfSarco = ethers.utils.parseUnits("12345", 18);
+            const usdcPricePerSarco = ethers.utils.parseUnits("1", 6);
+            const expectedCost = ethers.utils.parseUnits("12345", 6);
+            const contractCost = await deployAndGetCost(numberOfSarco, usdcPricePerSarco);
 
-            // Return USDCCost to purchase Sarco
-            let SarcoAllocation;
-            let USDCCost;
-            [SarcoAllocation, USDCCost] = await PurchaseExecutorDeployed.connect(USDCTokenHolder1).get_allocation(USDCTokenHolder1._address);
-            expect(USDCCost).to.equal(ethers.utils.parseUnits("1.0", 6));
+            expect(contractCost).to.equal(expectedCost);
         });
 
-        it("Should verify 1 Sarco costs 20 cents", async function () {
-            // Deploy Contract
-            PurchaseExecutorDeployed = await PurchaseExecutor.deploy(
-                ethers.utils.parseUnits("5.0", 18), // usdc_to_sarco_rate
-                100, // vesting duration
-                1000,// offer expiration delay
-                [USDCTokenHolder1._address, USDCTokenHolder2._address, USDCTokenHolder3._address],
-                [ethers.utils.parseUnits("1.0", 18), ethers.utils.parseUnits("1.0", 18), ethers.utils.parseUnits("1.0", 18)],
-                ethers.utils.parseUnits("3.0", 18),
-                USDCToken,
-                SarcoToken,
-                GeneralTokenVesting,
-                SarcoDao
-            );
+        it("Should verify purchasing 110,000 SARCO at a rate of 20 cents per SARCO costs $22,000", async function () {
+            const numberOfSarco = ethers.utils.parseUnits("110000", 18);
+            const usdcPricePerSarco = ethers.utils.parseUnits("0.2", 6);
+            const expectedCost = ethers.utils.parseUnits("22000", 6);
+            const contractCost = await deployAndGetCost(numberOfSarco, usdcPricePerSarco);
 
-            // Return USDCCost to purchase Sarco
-            let SarcoAllocation;
-            let USDCCost;
-            [SarcoAllocation, USDCCost] = await PurchaseExecutorDeployed.connect(USDCTokenHolder1).get_allocation(USDCTokenHolder1._address);
-            expect(USDCCost).to.equal(ethers.utils.parseUnits("2.0", 5));
+            expect(contractCost).to.equal(expectedCost);
         });
 
-        it("Should verify 1 Sarco costs 25 cents", async function () {
-            // Deploy Contract
-            PurchaseExecutorDeployed = await PurchaseExecutor.deploy(
-                ethers.utils.parseUnits("4.0", 18), // usdc_to_sarco_rate
-                100, // vesting duration
-                1000,// offer expiration delay
-                [USDCTokenHolder1._address, USDCTokenHolder2._address, USDCTokenHolder3._address],
-                [ethers.utils.parseUnits("1.0", 18), ethers.utils.parseUnits("1.0", 18), ethers.utils.parseUnits("1.0", 18)],
-                ethers.utils.parseUnits("3.0", 18),
-                USDCToken,
-                SarcoToken,
-                GeneralTokenVesting,
-                SarcoDao
-            );
+        it("Should verify purchasing 20,000 SARCO at a rate of 25 cents per SARCO costs $5,000", async function () {
+            const numberOfSarco = ethers.utils.parseUnits("20000", 18);
+            const usdcPricePerSarco = ethers.utils.parseUnits("0.25", 6);
+            const expectedCost = ethers.utils.parseUnits("5000", 6);
+            const contractCost = await deployAndGetCost(numberOfSarco, usdcPricePerSarco);
 
-            // Return USDCCost to purchase Sarco
-            let SarcoAllocation;
-            let USDCCost;
-            [SarcoAllocation, USDCCost] = await PurchaseExecutorDeployed.connect(USDCTokenHolder1).get_allocation(USDCTokenHolder1._address);
-            expect(USDCCost).to.equal(ethers.utils.parseUnits("2.5", 5));
+            expect(contractCost).to.equal(expectedCost);
         });
 
-        it("Should verify 1 Sarco costs 66 cents", async function () {
-            // Deploy Contract
-            PurchaseExecutorDeployed = await PurchaseExecutor.deploy(
-                ethers.utils.parseUnits("1.51515", 18), // usdc_to_sarco_rate
-                100, // vesting duration
-                1000,// offer expiration delay
-                [USDCTokenHolder1._address, USDCTokenHolder2._address, USDCTokenHolder3._address],
-                [ethers.utils.parseUnits("1.0", 18), ethers.utils.parseUnits("1.0", 18), ethers.utils.parseUnits("1.0", 18)],
-                ethers.utils.parseUnits("3.0", 18),
-                USDCToken,
-                SarcoToken,
-                GeneralTokenVesting,
-                SarcoDao
-            );
+        it("Should verify purchasing 1,500 SARCO at a rate of 66 cents per SARCO costs $990", async function () {
+            const numberOfSarco = ethers.utils.parseUnits("1500", 18);
+            const usdcPricePerSarco = ethers.utils.parseUnits("0.66", 6);
+            const expectedCost = ethers.utils.parseUnits("990", 6);
+            const contractCost = await deployAndGetCost(numberOfSarco, usdcPricePerSarco);
 
-            // Return USDCCost to purchase Sarco
-            let SarcoAllocation;
-            let USDCCost;
-            [SarcoAllocation, USDCCost] = await PurchaseExecutorDeployed.connect(USDCTokenHolder1).get_allocation(USDCTokenHolder1._address);
-            expect(USDCCost).to.equal(ethers.utils.parseUnits("6.6", 5));
+            expect(contractCost).to.equal(expectedCost);
         });
 
-        it("Should verify 1 Sarco costs 92 cents", async function () {
-            // Deploy Contract
-            PurchaseExecutorDeployed = await PurchaseExecutor.deploy(
-                ethers.utils.parseUnits("1.086956", 18), // usdc_to_sarco_rate
-                100, // vesting duration
-                1000,// offer expiration delay
-                [USDCTokenHolder1._address, USDCTokenHolder2._address, USDCTokenHolder3._address],
-                [ethers.utils.parseUnits("1.0", 18), ethers.utils.parseUnits("1.0", 18), ethers.utils.parseUnits("1.0", 18)],
-                ethers.utils.parseUnits("3.0", 18),
-                USDCToken,
-                SarcoToken,
-                GeneralTokenVesting,
-                SarcoDao
-            );
+        it("Should verify purchasing 121 SARCO at a rate of 92 cents per SARCO costs $111.32", async function () {
+            const numberOfSarco = ethers.utils.parseUnits("121", 18);
+            const usdcPricePerSarco = ethers.utils.parseUnits("0.92", 6);
+            const expectedCost = ethers.utils.parseUnits("111.32", 6);
+            const contractCost = await deployAndGetCost(numberOfSarco, usdcPricePerSarco);
 
-            // Return USDCCost to purchase Sarco
-            let SarcoAllocation;
-            let USDCCost;
-            [SarcoAllocation, USDCCost] = await PurchaseExecutorDeployed.connect(USDCTokenHolder1).get_allocation(USDCTokenHolder1._address);
-            expect(USDCCost).to.equal(ethers.utils.parseUnits("9.2", 5));
+            expect(contractCost).to.equal(expectedCost);
         });
 
-        it("Should verify 1 Sarco costs $1.50", async function () {
-            // Deploy Contract
-            PurchaseExecutorDeployed = await PurchaseExecutor.deploy(
-                ethers.utils.parseUnits("6.666665", 17), // usdc_to_sarco_rate
-                100, // vesting duration
-                1000,// offer expiration delay
-                [USDCTokenHolder1._address, USDCTokenHolder2._address, USDCTokenHolder3._address],
-                [ethers.utils.parseUnits("1.0", 18), ethers.utils.parseUnits("1.0", 18), ethers.utils.parseUnits("1.0", 18)],
-                ethers.utils.parseUnits("3.0", 18),
-                USDCToken,
-                SarcoToken,
-                GeneralTokenVesting,
-                SarcoDao
-            );
+        it("Should verify purchasing 25 SARCO at a rate of $1.50 per SARCO costs $37.50", async function () {
+            const numberOfSarco = ethers.utils.parseUnits("25", 18);
+            const usdcPricePerSarco = ethers.utils.parseUnits("1.50", 6);
+            const expectedCost = ethers.utils.parseUnits("37.5", 6);
+            const contractCost = await deployAndGetCost(numberOfSarco, usdcPricePerSarco);
 
-            // Return USDCCost to purchase Sarco
-            let SarcoAllocation;
-            let USDCCost;
-            [SarcoAllocation, USDCCost] = await PurchaseExecutorDeployed.connect(USDCTokenHolder1).get_allocation(USDCTokenHolder1._address);
-            expect(USDCCost).to.equal(ethers.utils.parseUnits("1.5", 6));
+            expect(contractCost).to.equal(expectedCost);
         });
 
         it("Should verify purchasing 1000 SARCO at a rate of $4.20 per SARCO costs $4200", async function () {
