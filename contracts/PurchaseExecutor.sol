@@ -203,17 +203,17 @@ contract PurchaseExecutor is Ownable {
 
     /**
      * @dev Returns the Sarco allocation and the USDC cost to purchase the Sarco Allocation of the whitelisted Sarco Purchaser
-     * @param _sarco_receiver Whitelisted Sarco Purchaser
+     * @param sarco_receiver Whitelisted Sarco Purchaser
      * @return A tuple: the first element is the amount of SARCO available for purchase (zero if
         the purchase was already executed for that address), the second element is the
         USDC cost of the purchase.
      */
-    function get_allocation(address _sarco_receiver)
+    function get_allocation(address sarco_receiver)
         public
         view
         returns (uint256, uint256)
     {
-        uint256 sarco_allocation = sarco_allocations[_sarco_receiver];
+        uint256 sarco_allocation = sarco_allocations[sarco_receiver];
         uint256 usdc_cost = get_usdc_cost(sarco_allocation);
 
         return (sarco_allocation, usdc_cost);
@@ -224,9 +224,9 @@ contract PurchaseExecutor is Ownable {
      * @notice Sends USDC tokens used to purchase Sarco to Sarco DAO, 
      Approves GeneralTokenVesting contract Sarco Tokens to utilizes allocated Sarco funds,
      Starts token vesting via GeneralTokenVesting contract.
-     * @param _sarco_receiver Whitelisted Sarco Purchaser
+     * @param sarco_receiver Whitelisted Sarco Purchaser
      */
-    function execute_purchase(address _sarco_receiver) external {
+    function execute_purchase(address sarco_receiver) external {
         if (offer_started_at == 0) {
             _start_unless_started();
         }
@@ -255,7 +255,7 @@ contract PurchaseExecutor is Ownable {
                 "Purchase Executed by account: ",
                 Strings.toHexString(uint160(msg.sender), 20),
                 " for account: ",
-                Strings.toHexString(uint160(_sarco_receiver), 20),
+                Strings.toHexString(uint160(sarco_receiver), 20),
                 ". Total SARCOs Purchased: ",
                 Strings.toString(sarco_allocation),
                 "."
@@ -271,13 +271,13 @@ contract PurchaseExecutor is Ownable {
 
         // Call GeneralTokenVesting startVest method
         GeneralTokenVesting(GENERAL_TOKEN_VESTING).startVest(
-            _sarco_receiver,
+            sarco_receiver,
             sarco_allocation,
             vesting_end_delay,
             address(SARCO_TOKEN)
         );
 
-        emit PurchaseExecuted(_sarco_receiver, sarco_allocation, usdc_cost);
+        emit PurchaseExecuted(sarco_receiver, sarco_allocation, usdc_cost);
     }
 
     /**
