@@ -18,11 +18,9 @@ describe("Purchase Executor Contract", function () {
     let USDCTokenHolder2;
     let USDCTokenHolder3;
     let GeneralTokenVesting;
-    let owner;
+    let owner, stranger;
     let SarcoDao;
     let SarcoVault;
-    const provider = ethers.getDefaultProvider();
-    const signer = ethers.Wallet.createRandom().connect(provider);
 
     beforeEach(async function () {
         // Reset fork
@@ -40,40 +38,29 @@ describe("Purchase Executor Contract", function () {
         await hre.network.provider.request({
             method: "hardhat_impersonateAccount",
             params: ["0x244265a76901b8030b140a2996e6dd4703cbf20f"]
-        } //SarcoToken holder
-        );
+        }); // SarcoToken holder
+        SarcoTokenHolder = await ethers.provider.getSigner("0x244265a76901b8030b140a2996e6dd4703cbf20f");
 
         await hre.network.provider.request({
             method: "hardhat_impersonateAccount",
             params: ["0xd6216fc19db775df9774a6e33526131da7d19a2c"]
-        } //USDCTokenHolder1 holder
-        );
+        }); // USDCTokenHolder1 holder
+        USDCTokenHolder1 = await ethers.provider.getSigner("0xd6216fc19db775df9774a6e33526131da7d19a2c");
 
         await hre.network.provider.request({
             method: "hardhat_impersonateAccount",
             params: ["0xf9706224f8b7275ee159866c35f26e1f43682e20"]
-        } //USDCTokenHolder2 holder
-        );
+        }); // USDCTokenHolder2 holder
+        USDCTokenHolder2 = await ethers.provider.getSigner("0xf9706224f8b7275ee159866c35f26e1f43682e20");
 
         await hre.network.provider.request({
             method: "hardhat_impersonateAccount",
             params: ["0x530e0a6993ea99ffc96615af43f327225a5fe536"]
-        } //USDCTokenHolder3 holder
-        );
-
-        await hre.network.provider.request({
-            method: "hardhat_impersonateAccount",
-            params: ["0x4f868c1aa37fcf307ab38d215382e88fca6275e2"]
-        } //USDCTokenHolder onBehalf holder
-        );
+        }); // USDCTokenHolder3 holder
+        USDCTokenHolder3 = await ethers.provider.getSigner("0x530e0a6993ea99ffc96615af43f327225a5fe536");
 
         // Get Signers
         [owner, stranger] = await ethers.getSigners();
-        SarcoTokenHolder = await ethers.provider.getSigner("0x244265a76901b8030b140a2996e6dd4703cbf20f");
-        USDCTokenHolder1 = await ethers.provider.getSigner("0xd6216fc19db775df9774a6e33526131da7d19a2c");
-        USDCTokenHolder2 = await ethers.provider.getSigner("0xf9706224f8b7275ee159866c35f26e1f43682e20");
-        USDCTokenHolder3 = await ethers.provider.getSigner("0x530e0a6993ea99ffc96615af43f327225a5fe536");
-        USDCTokenHolderOnBehalf = await ethers.provider.getSigner("0x530e0a6993ea99ffc96615af43f327225a5fe536");
 
         // Set Addresses
         SarcoToken = "0x7697b462a7c4ff5f8b55bdbc2f4076c2af9cf51a";
@@ -83,9 +70,9 @@ describe("Purchase Executor Contract", function () {
         GeneralTokenVesting = "0x8727c592F28F10b42eB0914a7f6a5885823794c0";
 
         // Set Contract Instances
-        SarcoTokenContract = new ethers.Contract(SarcoToken, Sarcoabi, signer);
-        USDCTokenContract = new ethers.Contract(USDCToken, USDCabi, signer);
-        GeneralTokenVestingContract = new ethers.Contract(GeneralTokenVesting, GeneralVestingabi, signer);
+        SarcoTokenContract = new ethers.Contract(SarcoToken, Sarcoabi, owner);
+        USDCTokenContract = new ethers.Contract(USDCToken, USDCabi, owner);
+        GeneralTokenVestingContract = new ethers.Contract(GeneralTokenVesting, GeneralVestingabi, owner);
 
         // Get the ContractFactory
         PurchaseExecutor = await ethers.getContractFactory("PurchaseExecutor");
