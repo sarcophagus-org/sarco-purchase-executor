@@ -222,7 +222,7 @@ contract PurchaseExecutor {
      Starts token vesting via GeneralTokenVesting contract.
      * @param _sarco_receiver Whitelisted Sarco Purchaser
      */
-    function _execute_purchase(address _sarco_receiver) internal {
+    function execute_purchase(address _sarco_receiver) external {
         if (offer_started_at == 0) {
             _start_unless_started();
         }
@@ -279,10 +279,6 @@ contract PurchaseExecutor {
         );
 
         emit PurchaseExecuted(_sarco_receiver, sarco_allocation, usdc_cost);
-    }
-
-    function execute_purchase(address _sarco_receiver) external {
-        _execute_purchase(_sarco_receiver);
     }
 
     /**
