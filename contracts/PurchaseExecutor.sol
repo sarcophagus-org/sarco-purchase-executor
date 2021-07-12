@@ -246,7 +246,7 @@ contract PurchaseExecutor {
                 Strings.toHexString(uint160(msg.sender), 20),
                 " for account: ",
                 Strings.toHexString(uint160(_sarco_receiver), 20),
-                ". Total Sarcos Purchased: ",
+                ". Total SARCOs Purchased: ",
                 Strings.toString(sarco_allocation),
                 "."
             )
