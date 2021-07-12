@@ -150,12 +150,21 @@ contract PurchaseExecutor {
         // Approve SarcoDao - PurchaseExecutor's total USDC tokens (Execute Purchase)
         USDC_TOKEN.approve(
             _sarco_dao,
-            ((_sarco_allocations_total * usdc_to_sarco_precision) /
-                _usdc_to_sarco_rate) / sarco_to_usdc_decimal_fix
+            get_usdc_cost(_sarco_allocations_total)
         );
 
         // Approve SarcoDao - Purchase Executor's total SARCO tokens (Recover Tokens)
         SARCO_TOKEN.approve(_sarco_dao, _sarco_allocations_total);
+    }
+
+    function get_usdc_cost(uint256 sarco_amount)
+        internal
+        view
+        returns (uint256)
+    {
+        return
+            ((sarco_amount * usdc_to_sarco_precision) / usdc_to_sarco_rate) /
+            sarco_to_usdc_decimal_fix;
     }
 
     function offer_started() public view returns (bool) {
@@ -201,8 +210,7 @@ contract PurchaseExecutor {
         returns (uint256, uint256)
     {
         uint256 sarco_allocation = sarco_allocations[_sarco_receiver];
-        uint256 usdc_cost = ((sarco_allocation * usdc_to_sarco_precision) /
-            usdc_to_sarco_rate) / sarco_to_usdc_decimal_fix;
+        uint256 usdc_cost = get_usdc_cost(sarco_allocation);
 
         return (sarco_allocation, usdc_cost);
     }
