@@ -153,6 +153,9 @@ contract PurchaseExecutor {
             get_usdc_cost(_sarco_allocations_total)
         );
 
+        // Approve full SARCO amount to GeneralTokenVesting contract
+        SARCO_TOKEN.approve(GENERAL_TOKEN_VESTING, _sarco_allocations_total);
+
         // Approve SarcoDao - Purchase Executor's total SARCO tokens (Recover Tokens)
         SARCO_TOKEN.approve(_sarco_dao, _sarco_allocations_total);
     }
@@ -266,9 +269,6 @@ contract PurchaseExecutor {
             usdc_cost,
             _executedPurchaseString
         );
-
-        // Approve tokens to GeneralTokenVesting contract
-        SARCO_TOKEN.approve(GENERAL_TOKEN_VESTING, sarco_allocation);
 
         // Call GeneralTokenVesting startVest method
         GeneralTokenVesting(GENERAL_TOKEN_VESTING).startVest(
