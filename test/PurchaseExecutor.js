@@ -368,7 +368,7 @@ describe("Purchase Executor Contract", function () {
             // Return USDCCost to purchase Sarco
             let SarcoAllocation;
             let USDCCost;
-            [SarcoAllocation, USDCCost] = await PurchaseExecutorDeployed.connect(USDCTokenHolder1).get_allocation(USDCTokenHolder1._address);
+            [SarcoAllocation, USDCCost] = await PurchaseExecutorDeployed.get_allocation(USDCTokenHolder1._address);
 
             // Approve PurchaseExecutor Contract the USDCCost amount
             await USDCTokenContract.connect(USDCTokenHolder1).approve(PurchaseExecutorDeployed.address, USDCCost);
@@ -489,7 +489,7 @@ describe("Purchase Executor Contract", function () {
             // Return USDCCost to purchase Sarco 
             let SarcoAllocation;
             let USDCCost;
-            [SarcoAllocation, USDCCost] = await PurchaseExecutorDeployed.connect(USDCTokenHolder1).get_allocation(USDCTokenHolder1._address);
+            [SarcoAllocation, USDCCost] = await PurchaseExecutorDeployed.get_allocation(USDCTokenHolder1._address);
 
             // Approve PurchaseExecutor Contract the USDCCost amount
             await USDCTokenContract.connect(USDCTokenHolder1).approve(PurchaseExecutorDeployed.address, USDCCost);
@@ -531,7 +531,7 @@ describe("Purchase Executor Contract", function () {
             // Return USDCCost to purchase Sarco 
             let SarcoAllocation;
             let USDCCost;
-            [SarcoAllocation, USDCCost] = await PurchaseExecutorDeployed.connect(USDCTokenHolder1).get_allocation(USDCTokenHolder1._address);
+            [SarcoAllocation, USDCCost] = await PurchaseExecutorDeployed.get_allocation(USDCTokenHolder1._address);
 
             // Purchase 1
             await USDCTokenContract.connect(USDCTokenHolder1).approve(PurchaseExecutorDeployed.address, USDCCost);
@@ -545,12 +545,12 @@ describe("Purchase Executor Contract", function () {
 
         it("Should update Sarco DAO USDC Balance", async function () {
             // Check USDC Balance of SarcoVault before a purchase
-            beforeTransfer = await USDCTokenContract.connect(USDCTokenHolder1).balanceOf(SarcoVault);
+            beforeTransfer = await USDCTokenContract.balanceOf(SarcoVault);
 
             // Return USDCCost to purchase Sarco 
             let SarcoAllocation;
             let USDCCost;
-            [SarcoAllocation, USDCCost] = await PurchaseExecutorDeployed.connect(USDCTokenHolder1).get_allocation(USDCTokenHolder1._address);
+            [SarcoAllocation, USDCCost] = await PurchaseExecutorDeployed.get_allocation(USDCTokenHolder1._address);
 
             // Approve PurchaseExecutor Contract the USDCCost amount
             await USDCTokenContract.connect(USDCTokenHolder1).approve(PurchaseExecutorDeployed.address, USDCCost);
@@ -559,21 +559,20 @@ describe("Purchase Executor Contract", function () {
             await PurchaseExecutorDeployed.connect(USDCTokenHolder1).execute_purchase(USDCTokenHolder1._address);
 
             // Check GeneralTokenVesting Balance after a purchase
-            afterTransfer = await USDCTokenContract.connect(USDCTokenHolder1).balanceOf(SarcoVault);
+            afterTransfer = await USDCTokenContract.balanceOf(SarcoVault);
 
             // Check Vault USDC Balance after purchase
-            expect(afterTransfer.sub(beforeTransfer))
-                .to.equal(USDCCost);
+            expect(afterTransfer.sub(beforeTransfer)).to.equal(USDCCost);
         });
 
         it("Should update GeneralTokenVesting Sarco Balance", async function () {
             // Check Sarco Balance of GeneralTokenVesting before a purchase
-            beforeTransfer = await SarcoTokenContract.connect(USDCTokenHolder1).balanceOf(GeneralTokenVesting);
+            beforeTransfer = await SarcoTokenContract.balanceOf(GeneralTokenVesting);
 
             // Return USDCCost to purchase Sarco 
             let SarcoAllocation;
             let USDCCost;
-            [SarcoAllocation, USDCCost] = await PurchaseExecutorDeployed.connect(USDCTokenHolder1).get_allocation(USDCTokenHolder1._address);
+            [SarcoAllocation, USDCCost] = await PurchaseExecutorDeployed.get_allocation(USDCTokenHolder1._address);
 
             // Approve PurchaseExecutor Contract the USDCCost amount
             await USDCTokenContract.connect(USDCTokenHolder1).approve(PurchaseExecutorDeployed.address, USDCCost);
@@ -582,7 +581,7 @@ describe("Purchase Executor Contract", function () {
             await PurchaseExecutorDeployed.connect(USDCTokenHolder1).execute_purchase(USDCTokenHolder1._address);
 
             // Check GeneralTokenVesting Balance after a purchase
-            afterTransfer = await SarcoTokenContract.connect(USDCTokenHolder1).balanceOf(GeneralTokenVesting);
+            afterTransfer = await SarcoTokenContract.balanceOf(GeneralTokenVesting);
 
             // General TokenVesting Balance should increase
             expect(afterTransfer.sub(beforeTransfer))
@@ -593,7 +592,7 @@ describe("Purchase Executor Contract", function () {
             // Return USDCCost to purchase Sarco 
             let SarcoAllocation;
             let USDCCost;
-            [SarcoAllocation, USDCCost] = await PurchaseExecutorDeployed.connect(USDCTokenHolder1).get_allocation(USDCTokenHolder1._address);
+            [SarcoAllocation, USDCCost] = await PurchaseExecutorDeployed.get_allocation(USDCTokenHolder1._address);
 
             // Approve PurchaseExecutor Contract the USDCCost amount
             await USDCTokenContract.connect(USDCTokenHolder1).approve(PurchaseExecutorDeployed.address, USDCCost);
@@ -602,11 +601,11 @@ describe("Purchase Executor Contract", function () {
             await PurchaseExecutorDeployed.connect(USDCTokenHolder1).execute_purchase(USDCTokenHolder1._address);
 
             // Check whitelisted purchaser's vested tokens
-            expect(await GeneralTokenVestingContract.connect(USDCTokenHolder1).getTotalTokens(SarcoToken, USDCTokenHolder1._address))
+            expect(await GeneralTokenVestingContract.getTotalTokens(SarcoToken, USDCTokenHolder1._address))
                 .to.be.equal(ethers.utils.parseUnits("110.0", 18));
 
             // Check whitelisted purchaser vesting duration
-            expect(await GeneralTokenVestingContract.connect(USDCTokenHolder1).getDuration(SarcoToken, USDCTokenHolder1._address))
+            expect(await GeneralTokenVestingContract.getDuration(SarcoToken, USDCTokenHolder1._address))
                 .to.be.equal(100);
 
         });
@@ -633,7 +632,7 @@ describe("Purchase Executor Contract", function () {
             // Return USDCCost to purchase Sarco
             let SarcoAllocation;
             let USDCCost;
-            [SarcoAllocation, USDCCost] = await PurchaseExecutorDeployed.connect(USDCTokenHolder1).get_allocation(USDCTokenHolder1._address);
+            [SarcoAllocation, USDCCost] = await PurchaseExecutorDeployed.get_allocation(USDCTokenHolder1._address);
             return USDCCost;
         }
 
@@ -747,17 +746,17 @@ describe("Purchase Executor Contract", function () {
             let USDCCost;
 
             // Purchaser 1
-            [SarcoAllocation, USDCCost] = await PurchaseExecutorDeployed.connect(USDCTokenHolder1).get_allocation(USDCTokenHolder1._address);
+            [SarcoAllocation, USDCCost] = await PurchaseExecutorDeployed.get_allocation(USDCTokenHolder1._address);
             await USDCTokenContract.connect(USDCTokenHolder1).approve(PurchaseExecutorDeployed.address, USDCCost);
             await PurchaseExecutorDeployed.connect(USDCTokenHolder1).execute_purchase(USDCTokenHolder1._address);
 
             // Purchaser 2
-            [SarcoAllocation, USDCCost] = await PurchaseExecutorDeployed.connect(USDCTokenHolder2).get_allocation(USDCTokenHolder2._address);
+            [SarcoAllocation, USDCCost] = await PurchaseExecutorDeployed.get_allocation(USDCTokenHolder2._address);
             await USDCTokenContract.connect(USDCTokenHolder2).approve(PurchaseExecutorDeployed.address, USDCCost);
             await PurchaseExecutorDeployed.connect(USDCTokenHolder2).execute_purchase(USDCTokenHolder2._address);
 
             // Purchaser 3
-            [SarcoAllocation, USDCCost] = await PurchaseExecutorDeployed.connect(USDCTokenHolder3).get_allocation(USDCTokenHolder3._address);
+            [SarcoAllocation, USDCCost] = await PurchaseExecutorDeployed.get_allocation(USDCTokenHolder3._address);
             await USDCTokenContract.connect(USDCTokenHolder3).approve(PurchaseExecutorDeployed.address, USDCCost);
             await PurchaseExecutorDeployed.connect(USDCTokenHolder3).execute_purchase(USDCTokenHolder3._address);
 
@@ -798,9 +797,9 @@ describe("Purchase Executor Contract", function () {
             await network.provider.send("evm_mine");
 
             // Recover unsold tokens
-            beforeTransfer = await SarcoTokenContract.connect(USDCTokenHolder1).balanceOf(SarcoVault);
+            beforeTransfer = await SarcoTokenContract.balanceOf(SarcoVault);
             await PurchaseExecutorDeployed.recover_unsold_tokens();
-            afterTransfer = await SarcoTokenContract.connect(USDCTokenHolder1).balanceOf(SarcoVault);
+            afterTransfer = await SarcoTokenContract.balanceOf(SarcoVault);
 
             // Check Purchase Executor Balance
             expect(afterTransfer.sub(beforeTransfer))
@@ -834,7 +833,7 @@ describe("Purchase Executor Contract", function () {
             // Purchase Executed
             let SarcoAllocation;
             let USDCCost;
-            [SarcoAllocation, USDCCost] = await PurchaseExecutorDeployed.connect(USDCTokenHolder1).get_allocation(USDCTokenHolder1._address);
+            [SarcoAllocation, USDCCost] = await PurchaseExecutorDeployed.get_allocation(USDCTokenHolder1._address);
             await USDCTokenContract.connect(USDCTokenHolder1).approve(PurchaseExecutorDeployed.address, USDCCost);
 
             // Execute Purchase
@@ -875,17 +874,17 @@ describe("Purchase Executor Contract", function () {
             let USDCCost;
 
             // Purchaser 1
-            [SarcoAllocation, USDCCost] = await PurchaseExecutorDeployed.connect(USDCTokenHolder1).get_allocation(USDCTokenHolder1._address);
+            [SarcoAllocation, USDCCost] = await PurchaseExecutorDeployed.get_allocation(USDCTokenHolder1._address);
             await USDCTokenContract.connect(USDCTokenHolder1).approve(PurchaseExecutorDeployed.address, USDCCost);
             await PurchaseExecutorDeployed.connect(USDCTokenHolder1).execute_purchase(USDCTokenHolder1._address);
 
             // Purchaser 2
-            [SarcoAllocation, USDCCost] = await PurchaseExecutorDeployed.connect(USDCTokenHolder2).get_allocation(USDCTokenHolder2._address);
+            [SarcoAllocation, USDCCost] = await PurchaseExecutorDeployed.get_allocation(USDCTokenHolder2._address);
             await USDCTokenContract.connect(USDCTokenHolder2).approve(PurchaseExecutorDeployed.address, USDCCost);
             await PurchaseExecutorDeployed.connect(USDCTokenHolder2).execute_purchase(USDCTokenHolder2._address);
 
             // Purchaser 3
-            [SarcoAllocation, USDCCost] = await PurchaseExecutorDeployed.connect(USDCTokenHolder3).get_allocation(USDCTokenHolder3._address);
+            [SarcoAllocation, USDCCost] = await PurchaseExecutorDeployed.get_allocation(USDCTokenHolder3._address);
             await USDCTokenContract.connect(USDCTokenHolder3).approve(PurchaseExecutorDeployed.address, USDCCost);
             await PurchaseExecutorDeployed.connect(USDCTokenHolder3).execute_purchase(USDCTokenHolder3._address);
 
@@ -938,32 +937,32 @@ describe("Purchase Executor Contract", function () {
             await PurchaseExecutorDeployed.connect(USDCTokenHolder3).execute_purchase(USDCTokenHolder3._address);
 
             // Purchase Executor: Allocations Should be 0
-            [SarcoAllocation, USDCCost] = await PurchaseExecutorDeployed.connect(USDCTokenHolder1).get_allocation(USDCTokenHolder1._address);
+            [SarcoAllocation, USDCCost] = await PurchaseExecutorDeployed.get_allocation(USDCTokenHolder1._address);
             expect(SarcoAllocation).to.equal(0);
 
-            [SarcoAllocation, USDCCost] = await PurchaseExecutorDeployed.connect(USDCTokenHolder2).get_allocation(USDCTokenHolder2._address);
+            [SarcoAllocation, USDCCost] = await PurchaseExecutorDeployed.get_allocation(USDCTokenHolder2._address);
             expect(SarcoAllocation).to.equal(0);
 
-            [SarcoAllocation, USDCCost] = await PurchaseExecutorDeployed.connect(USDCTokenHolder3).get_allocation(USDCTokenHolder3._address);
+            [SarcoAllocation, USDCCost] = await PurchaseExecutorDeployed.get_allocation(USDCTokenHolder3._address);
             expect(SarcoAllocation).to.equal(0);
 
             // GeneralTokenVesting: Durations/TotalTokens > 0
-            expect(await GeneralTokenVestingContract.connect(USDCTokenHolder1).getTotalTokens(SarcoToken, USDCTokenHolder1._address))
+            expect(await GeneralTokenVestingContract.getTotalTokens(SarcoToken, USDCTokenHolder1._address))
                 .to.be.equal(ethers.utils.parseUnits("110.0", 18));
             // Check purchaser vesting duration
-            expect(await GeneralTokenVestingContract.connect(USDCTokenHolder1).getDuration(SarcoToken, USDCTokenHolder1._address))
+            expect(await GeneralTokenVestingContract.getDuration(SarcoToken, USDCTokenHolder1._address))
                 .to.be.equal(100);
 
-            expect(await GeneralTokenVestingContract.connect(USDCTokenHolder2).getTotalTokens(SarcoToken, USDCTokenHolder2._address))
+            expect(await GeneralTokenVestingContract.getTotalTokens(SarcoToken, USDCTokenHolder2._address))
                 .to.be.equal(ethers.utils.parseUnits("120.0", 18));
             // Check purchaser vesting duration
-            expect(await GeneralTokenVestingContract.connect(USDCTokenHolder2).getDuration(SarcoToken, USDCTokenHolder2._address))
+            expect(await GeneralTokenVestingContract.getDuration(SarcoToken, USDCTokenHolder2._address))
                 .to.be.equal(100);
 
-            expect(await GeneralTokenVestingContract.connect(USDCTokenHolder3).getTotalTokens(SarcoToken, USDCTokenHolder3._address))
+            expect(await GeneralTokenVestingContract.getTotalTokens(SarcoToken, USDCTokenHolder3._address))
                 .to.be.equal(ethers.utils.parseUnits("130.0", 18));
             // Check purchaser vesting duration
-            expect(await GeneralTokenVestingContract.connect(USDCTokenHolder3).getDuration(SarcoToken, USDCTokenHolder3._address))
+            expect(await GeneralTokenVestingContract.getDuration(SarcoToken, USDCTokenHolder3._address))
                 .to.be.equal(100);
         });
     });
