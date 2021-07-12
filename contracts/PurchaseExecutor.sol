@@ -244,13 +244,11 @@ contract PurchaseExecutor {
         // Clear _sarco_receiver's allocation
         sarco_allocations[_sarco_receiver] = 0;
 
-        string memory _executedPurchaseString;
-
-        // Forward USDC cost of the purchase to the DAO contract
+        // transfer user's USDC to this contract
         USDC_TOKEN.safeTransferFrom(msg.sender, address(this), usdc_cost);
 
-        // Dynamically Build String
-        _executedPurchaseString = string(
+        // Dynamically Build finance app's "message" string
+        string memory _executedPurchaseString = string(
             abi.encodePacked(
                 "Purchase Executed by account: ",
                 Strings.toHexString(uint160(msg.sender), 20),
@@ -302,15 +300,13 @@ contract PurchaseExecutor {
 
         uint256 unsold_sarco_amount = SARCO_TOKEN.balanceOf(address(this));
 
-        string memory _recoverTokensString;
-
         require(
             unsold_sarco_amount > 0,
             "PurchaseExecutor: There are no Sarco tokens to recover"
         );
 
-        // Dynamically Build String
-        _recoverTokensString = "Recovered unsold SARCO tokens";
+        // Dynamically Build finance app's "message" string
+        string memory _recoverTokensString = "Recovered unsold SARCO tokens";
 
         // Forward recoverable SARCO tokens to the DAO contract via the Finance Deposit method
         Finance(SARCO_DAO).deposit(
