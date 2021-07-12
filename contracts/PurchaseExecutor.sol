@@ -275,7 +275,7 @@ contract PurchaseExecutor {
             _sarco_receiver,
             sarco_allocation,
             vesting_end_delay,
-            SARCO_TOKEN
+            address(SARCO_TOKEN)
         );
 
         emit PurchaseExecuted(_sarco_receiver, sarco_allocation, usdc_cost);

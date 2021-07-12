@@ -1,6 +1,4 @@
 // SPDX-License-Identifier: MIT
-import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
-
 pragma solidity ^0.8.4;
 
 interface GeneralTokenVesting {
@@ -8,6 +6,6 @@ interface GeneralTokenVesting {
         address beneficiary,
         uint256 tokensToVest,
         uint256 vestDuration,
-        IERC20 tokenAddress
+        address tokenAddress
     ) external;
 }
