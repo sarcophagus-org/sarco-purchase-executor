@@ -311,6 +311,11 @@ contract PurchaseExecutor {
             _recoverTokensString
         );
 
+        // zero out token approvals that this contract has given in its constructor
+        USDC_TOKEN.approve(SARCO_DAO, 0);
+        SARCO_TOKEN.approve(GENERAL_TOKEN_VESTING, 0);
+        SARCO_TOKEN.approve(SARCO_DAO, 0);
+
         emit TokensRecovered(unsold_sarco_amount);
     }
 }
