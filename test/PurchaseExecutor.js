@@ -5,6 +5,7 @@ require('dotenv').config();
 const Sarcoabi = require('../contractabi/SarcoABI.json');
 const USDCabi = require('../contractabi/USDCABI.json');
 const GeneralVestingabi = require('../contractabi/GeneralTokenVestingABI.json');
+const { calculateUsdcSarcoRate } = require('../helpers');
 
 describe("Purchase Executor Contract", function () {
     let PurchaseExecutor;
@@ -765,15 +766,21 @@ describe("Purchase Executor Contract", function () {
             expect(USDCCost).to.equal(ethers.utils.parseUnits("1.5", 6));
         });
 
-        it("Should verify 1 Sarco costs $4.20", async function () {
+        it("Should verify purchasing 1000 SARCO at a rate of $4.20 per SARCO costs $4200", async function () {
+            const numberOfSarco = ethers.utils.parseUnits("1000", 18);
+            const usdcPricePerSarco = ethers.utils.parseUnits("4.20", 6);
+            const calculatedCost = ethers.utils.parseUnits("4200", 6);
+
+            const rate = calculateUsdcSarcoRate(usdcPricePerSarco)
+            
             // Deploy Contract
             PurchaseExecutorDeployed = await PurchaseExecutor.deploy(
-                ethers.utils.parseUnits("2.380952", 17), // usdc_to_sarco_rate
+                rate, // usdc_to_sarco_rate
                 100, // vesting duration
                 1000,// offer expiration delay
-                [USDCTokenHolder1._address, USDCTokenHolder2._address, USDCTokenHolder3._address],
-                [ethers.utils.parseUnits("1.0", 18), ethers.utils.parseUnits("1.0", 18), ethers.utils.parseUnits("1.0", 18)],
-                ethers.utils.parseUnits("3.0", 18),
+                [USDCTokenHolder1._address],
+                [numberOfSarco],
+                numberOfSarco,
                 USDCToken,
                 SarcoToken,
                 GeneralTokenVesting,
@@ -784,7 +791,7 @@ describe("Purchase Executor Contract", function () {
             let SarcoAllocation;
             let USDCCost;
             [SarcoAllocation, USDCCost] = await PurchaseExecutorDeployed.connect(USDCTokenHolder1).get_allocation(USDCTokenHolder1._address);
-            expect(USDCCost).to.equal(ethers.utils.parseUnits("4.2", 6));
+            expect(USDCCost).to.equal(calculatedCost);
         });
     });
 
