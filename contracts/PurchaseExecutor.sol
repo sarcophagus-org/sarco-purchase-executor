@@ -4,7 +4,6 @@ import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
 import "./interfaces/GeneralTokenVesting.sol";
 import "./interfaces/Finance.sol";
-import "hardhat/console.sol";
 
 /**
  * @title PurchaseExecutor
@@ -256,14 +255,12 @@ contract PurchaseExecutor {
                 "Purchase Executed by account: ",
                 Strings.toHexString(uint160(msg.sender), 20),
                 " for account: ",
-                Strings.toHexString(uint160(msg.sender), 20),
+                Strings.toHexString(uint160(_sarco_receiver), 20),
                 ". Total Sarcos Purchased: ",
                 Strings.toString(sarco_allocation),
-                " For Total USDC Amount of: ",
-                Strings.toString(usdc_cost)
+                "."
             )
         );
-        console.log(_executedPurchaseString);
 
         // Forward USDC cost of the purchase to the DAO contract via the Finance Deposit method
         Finance(SARCO_DAO).deposit(
@@ -313,16 +310,7 @@ contract PurchaseExecutor {
         );
 
         // Dynamically Build String
-        _recoverTokensString = string(
-            abi.encodePacked(
-                "Tokens recovered by account: ",
-                Strings.toHexString(uint160(msg.sender), 20),
-                ". Total Sarco tokens recovered: ",
-                Strings.toString(unsold_sarco_amount)
-            )
-        );
-
-        console.log(_recoverTokensString);
+        _recoverTokensString = "Recovered unsold SARCO tokens";
 
         // Forward recoverable SARCO tokens to the DAO contract via the Finance Deposit method
         Finance(SARCO_DAO).deposit(
