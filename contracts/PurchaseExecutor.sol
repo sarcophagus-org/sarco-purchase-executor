@@ -1,5 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.4;
+
+import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
 import "./interfaces/GeneralTokenVesting.sol";
@@ -9,7 +11,7 @@ import "./interfaces/Finance.sol";
  * @title PurchaseExecutor
  * @dev allow a whitelisted set of addresses to purchase SARCO tokens, for stablecoins (USDC), at a set rate
  */
-contract PurchaseExecutor {
+contract PurchaseExecutor is Ownable {
     using SafeERC20 for IERC20;
 
     IERC20 public USDC_TOKEN;
@@ -19,7 +21,6 @@ contract PurchaseExecutor {
     uint256 public usdc_to_sarco_precision = 10**18;
     uint256 public sarco_to_usdc_decimal_fix = 10**(18 - 6);
 
-    // How much SARCO in one USDC, USDC_TO_SARCO_RATE_PERCISION being 1
     uint256 public usdc_to_sarco_rate;
     uint256 public sarco_allocations_total;
     mapping(address => uint256) public sarco_allocations;
@@ -315,5 +316,15 @@ contract PurchaseExecutor {
         SARCO_TOKEN.approve(SARCO_DAO, 0);
 
         emit TokensRecovered(unsold_sarco_amount);
+    }
+
+    /**
+     * @dev Remember that only owner can call so be careful when use on contracts generated from other contracts.
+     * @param tokenAddress The token contract address
+     * @param tokenAmount Number of tokens to be sent
+     * @param recipientAddress The address to send tokens to
+     */
+    function recover_erc20(address tokenAddress, uint256 tokenAmount, address recipientAddress) public onlyOwner {
+        IERC20(tokenAddress).safeTransfer(recipientAddress, tokenAmount);
     }
 }
