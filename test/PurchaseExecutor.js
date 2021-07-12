@@ -634,6 +634,30 @@ describe("Purchase Executor Contract", function () {
     });
 
     describe("Verify usdc_to_sarco conversion rates", function () {
+        const deployAndGetCost = async (recipients, numbersOfSarco, usdcPricePerSarco) => {
+            const rate = calculateUsdcSarcoRate(usdcPricePerSarco)
+            
+            // Deploy Contract
+            PurchaseExecutorDeployed = await PurchaseExecutor.deploy(
+                rate, // usdc_to_sarco_rate
+                100, // vesting duration
+                1000,// offer expiration delay
+                recipients,
+                numbersOfSarco,
+                numbersOfSarco.reduce((p, c) => p.add(c), ethers.BigNumber.from(0)),
+                USDCToken,
+                SarcoToken,
+                GeneralTokenVesting,
+                SarcoDao
+            );
+
+            // Return USDCCost to purchase Sarco
+            let SarcoAllocation;
+            let USDCCost;
+            [SarcoAllocation, USDCCost] = await PurchaseExecutorDeployed.connect(USDCTokenHolder1).get_allocation(USDCTokenHolder1._address);
+            return USDCCost;
+        }
+
         it("Should verify 1 Sarco costs $1", async function () {
             // Deploy Contract
             PurchaseExecutorDeployed = await PurchaseExecutor.deploy(
@@ -770,28 +794,8 @@ describe("Purchase Executor Contract", function () {
             const numberOfSarco = ethers.utils.parseUnits("1000", 18);
             const usdcPricePerSarco = ethers.utils.parseUnits("4.20", 6);
             const calculatedCost = ethers.utils.parseUnits("4200", 6);
-
-            const rate = calculateUsdcSarcoRate(usdcPricePerSarco)
-            
-            // Deploy Contract
-            PurchaseExecutorDeployed = await PurchaseExecutor.deploy(
-                rate, // usdc_to_sarco_rate
-                100, // vesting duration
-                1000,// offer expiration delay
-                [USDCTokenHolder1._address],
-                [numberOfSarco],
-                numberOfSarco,
-                USDCToken,
-                SarcoToken,
-                GeneralTokenVesting,
-                SarcoDao
-            );
-
-            // Return USDCCost to purchase Sarco
-            let SarcoAllocation;
-            let USDCCost;
-            [SarcoAllocation, USDCCost] = await PurchaseExecutorDeployed.connect(USDCTokenHolder1).get_allocation(USDCTokenHolder1._address);
-            expect(USDCCost).to.equal(calculatedCost);
+            const cost = await deployAndGetCost([USDCTokenHolder1._address], [numberOfSarco], usdcPricePerSarco);
+            expect(cost).to.equal(calculatedCost);
         });
     });
 
