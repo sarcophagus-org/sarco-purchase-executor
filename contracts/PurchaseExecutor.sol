@@ -234,20 +234,18 @@ contract PurchaseExecutor {
             "PurchaseExecutor: Purchases cannot be made after the offer has expired"
         );
 
-        (uint256 sarco_allocation, uint256 usdc_cost) = get_allocation(
-            _sarco_receiver
-        );
+        (uint256 sarco_allocation, uint256 usdc_cost) = get_allocation(msg.sender);
 
-        // Check _sarco_receiver allocation
+        // Check sender's allocation
         require(
             sarco_allocation > 0,
-            "PurchaseExecutor: _sarco_receiver does not have a Sarco allocation"
+            "PurchaseExecutor: sender does not have a SARCO allocation"
         );
 
-        // Clear _sarco_receiver's allocation
-        sarco_allocations[_sarco_receiver] = 0;
+        // Clear sender's allocation
+        sarco_allocations[msg.sender] = 0;
 
-        // transfer user's USDC to this contract
+        // transfer sender's USDC to this contract
         USDC_TOKEN.safeTransferFrom(msg.sender, address(this), usdc_cost);
 
         // Dynamically Build finance app's "message" string

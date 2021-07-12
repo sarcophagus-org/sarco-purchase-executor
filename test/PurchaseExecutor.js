@@ -477,7 +477,7 @@ describe("Purchase Executor Contract", function () {
 
         it("Should revert since the Purchaser does not have an allocation", async function () {
             await expect(PurchaseExecutorDeployed.connect(owner).execute_purchase(owner.address))
-                .to.be.revertedWith("PurchaseExecutor: _sarco_receiver does not have a Sarco allocation");
+                .to.be.revertedWith("PurchaseExecutor: sender does not have a SARCO allocation");
         });
 
         it("Should revert since the Purchaser did not approve PurchaseExecutor for purchase", async function () {
@@ -499,40 +499,32 @@ describe("Purchase Executor Contract", function () {
                 .to.emit(PurchaseExecutorDeployed, "PurchaseExecuted");
         });
 
-        it("Should be able to purchase on the behalf of another user", async function () {
+        it("Should not be able to purchase on the behalf of another user", async function () {
             // Return USDCCost to purchase Sarco 
             let SarcoAllocation;
             let USDCCost;
-            [SarcoAllocation, USDCCost] = await PurchaseExecutorDeployed.connect(USDCTokenHolderOnBehalf).get_allocation(USDCTokenHolder1._address);
+            [SarcoAllocation, USDCCost] = await PurchaseExecutorDeployed.get_allocation(USDCTokenHolder1._address);
 
             // Approve PurchaseExecutor Contract the USDCCost amount
-            await USDCTokenContract.connect(USDCTokenHolderOnBehalf).approve(PurchaseExecutorDeployed.address, USDCCost);
+            await USDCTokenContract.connect(USDCTokenHolder1).approve(PurchaseExecutorDeployed.address, USDCCost);
 
             // Execute Purchase onBehalf of a whitelisted Purchaser
-            await expect(PurchaseExecutorDeployed.connect(USDCTokenHolderOnBehalf).execute_purchase(USDCTokenHolder1._address))
-                .to.emit(PurchaseExecutorDeployed, "PurchaseExecuted");
+            await expect(PurchaseExecutorDeployed.connect(stranger).execute_purchase(USDCTokenHolder1._address))
+                .to.be.revertedWith("PurchaseExecutor: sender does not have a SARCO allocation");
         });
 
-        it("Should update whitelisted Purchasers GeneralTokenVestings state when a purchase is made on their behalf", async function () {
-            // Return USDCCost to purchase Sarco 
-            let SarcoAllocation;
-            let USDCCost;
-            [SarcoAllocation, USDCCost] = await PurchaseExecutorDeployed.connect(USDCTokenHolderOnBehalf).get_allocation(USDCTokenHolder1._address);
+        it("should allow purchaser to assign SARCO to another address", async function () {
+            let SarcoAllocation, USDCCost
+            [SarcoAllocation, USDCCost] = await PurchaseExecutorDeployed.get_allocation(USDCTokenHolder1._address);
 
             // Approve PurchaseExecutor Contract the USDCCost amount
-            await USDCTokenContract.connect(USDCTokenHolderOnBehalf).approve(PurchaseExecutorDeployed.address, USDCCost);
+            await USDCTokenContract.connect(USDCTokenHolder1).approve(PurchaseExecutorDeployed.address, USDCCost);
 
-            // Execute Purchase onBehalf of a whitelisted Purchaser
-            await expect(PurchaseExecutorDeployed.connect(USDCTokenHolderOnBehalf).execute_purchase(USDCTokenHolder1._address))
-                .to.emit(PurchaseExecutorDeployed, "PurchaseExecuted");
+            // Execute Purchase on Behalf of a whitelisted Purchaser, assigning SARCO to another address
+            await PurchaseExecutorDeployed.connect(USDCTokenHolder1).execute_purchase(stranger.address);
 
-            // Check whitelisted purchaser's vested tokens
-            expect(await GeneralTokenVestingContract.connect(USDCTokenHolderOnBehalf).getTotalTokens(SarcoToken, USDCTokenHolder1._address))
-                .to.be.equal(ethers.utils.parseUnits("110.0", 18));
-
-            // Check whitelisted purchaser vesting duration
-            expect(await GeneralTokenVestingContract.connect(USDCTokenHolderOnBehalf).getDuration(SarcoToken, USDCTokenHolder1._address))
-                .to.be.equal(100);
+            // verify that the SARCO is in token vesting, on behalf of third party address
+            expect(await GeneralTokenVestingContract.getTotalTokens(SarcoToken, stranger.address)).to.eq(SarcoAllocation);
         });
 
         it("Should revert if you attempt to purchase twice", async function () {
@@ -548,7 +540,7 @@ describe("Purchase Executor Contract", function () {
             // Purchase 2
             await USDCTokenContract.connect(USDCTokenHolder1).approve(PurchaseExecutorDeployed.address, USDCCost);
             await expect(PurchaseExecutorDeployed.connect(USDCTokenHolder1).execute_purchase(USDCTokenHolder1._address))
-                .to.be.revertedWith("PurchaseExecutor: _sarco_receiver does not have a Sarco allocation");
+                .to.be.revertedWith("PurchaseExecutor: sender does not have a SARCO allocation");
         });
 
         it("Should update Sarco DAO USDC Balance", async function () {
