@@ -2,9 +2,9 @@
 const { expect } = require("chai");
 const { network } = require("hardhat");
 require('dotenv').config();
-const Sarcoabi = require('../contractabi/SarcoABI.json');
-const USDCabi = require('../contractabi/USDCABI.json');
-const GeneralVestingabi = require('../contractabi/GeneralTokenVestingABI.json');
+const Sarcoabi = require('./contractabi/SarcoABI.json');
+const USDCabi = require('./contractabi/USDCABI.json');
+const GeneralVestingabi = require('./contractabi/GeneralTokenVestingABI.json');
 const { calculateUsdcSarcoRate } = require('../helpers');
 
 describe("Purchase Executor Contract", function () {
