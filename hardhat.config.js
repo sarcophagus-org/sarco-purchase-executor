@@ -3,7 +3,7 @@ require("@nomiclabs/hardhat-ethers");
 require('hardhat-deploy');
 require('dotenv').config();
 require("@nomiclabs/hardhat-etherscan");
-
+require("hardhat-gas-reporter");
 
 module.exports = {
   solidity: "0.8.4",
